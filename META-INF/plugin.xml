@@ -1,0 +1,49 @@
+<!-- <!DOCTYPE idea-plugin PUBLIC "Plugin/DTD" "http://plugins.intellij.net/plugin.dtd"> -->
+<idea-plugin url="http://github.com">
+    <name>Clo-Jet</name>
+    <description>Provides support for Clojure, including code editing and a REPL</description>
+    <version>0.1</version>
+    <category>Custom Languages</category>
+    <vendor>The Bit Bakery</vendor>
+    <idea-version since-build="8000"/>
+
+    <!-- TODO -->
+    <helpset></helpset>
+    <change-notes></change-notes>
+
+
+    <resource-bundle>com.bitbakery.clojet.CloJetStrings</resource-bundle>
+
+
+    <application-components>
+        <component>
+            <implementation-class>com.bitbakery.clojet.CloJetSupportLoader</implementation-class>
+        </component>
+        <component>
+            <implementation-class>com.bitbakery.clojet.config.CloJetConfiguration</implementation-class>
+        </component>
+    </application-components>
+
+
+    <project-components>
+        <!-- Add your project components here -->
+    </project-components>
+
+
+    <actions>
+        <!-- Add your actions here -->
+    </actions>
+
+
+    <extensions defaultExtensionNs="com.intellij">
+        <fileTypeFactory implementation="com.bitbakery.clojet.CloJetSupportLoader"/>
+        <syntaxHighlighter key="Clojure" factoryClass="com.bitbakery.clojet.ClojureSyntaxHighlighterProvider"/>
+        <lang.braceMatcher language="Clojure" implementationClass="com.bitbakery.clojet.ClojureBraceMatcher"/>
+        <lang.commenter language="Clojure" implementationClass="com.bitbakery.clojet.ClojureCommenter"/>
+        <lang.foldingBuilder language="Clojure" implementationClass="com.bitbakery.clojet.ClojureFoldingBuilder"/>
+        <lang.languageProvider language="Clojure" implementationClass="com.bitbakery.clojet.ClojureLanguage"/>
+        <lang.parserDefinition language="Clojure" implementationClass="com.bitbakery.clojet.ClojureParserDefinition"/>
+    </extensions>
+
+
+</idea-plugin>
