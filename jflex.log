@@ -1,0 +1,7 @@
+Reading skeleton file "lib/idea-flex.skeleton".
+Reading "src/com/bitbakery/clojet/lexer/clojure.flex"
+Constructing NFA : 299 states in NFA
+Converting NFA to DFA : 
+......................................................................................................................
+120 states before minimization, 88 states in minimized DFA
+Writing code to "src/com/bitbakery/clojet/lexer/_ClojureLexer.java"

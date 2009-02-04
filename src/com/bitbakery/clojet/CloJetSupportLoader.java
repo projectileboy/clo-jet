@@ -41,10 +41,6 @@ TODO - See Javascript plugin for good examples of inspection goodies
         return CLOJURE;
     }
 
-//    public void createFileTypes(final @NotNull PairConsumer<FileType, String> consumer) {
-//        consumer.consume(ARC, "arc");
-//    }
-
     //public Icon getIcon(@NotNull final PsiElement element, final int flags) {
     //    return null;
     //}
