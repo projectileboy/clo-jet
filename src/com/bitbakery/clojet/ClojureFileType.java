@@ -23,7 +23,7 @@ public class ClojureFileType extends LanguageFileType {
 
     @NotNull
     public String getDescription() {
-        return null;  // TODO
+        return CloJetStrings.message("file.description");
     }
 
     @NotNull
@@ -32,6 +32,6 @@ public class ClojureFileType extends LanguageFileType {
     }
 
     public Icon getIcon() {
-        return null;  // TODO
+        return CloJetIcons.CLOJURE_FILE_ICON;
     }
 }

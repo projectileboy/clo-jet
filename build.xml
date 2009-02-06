@@ -15,10 +15,10 @@
 
     <!-- TODO - Include this as part of an overall build process... -->
     <target name="copy-resources">
-        <copy todir="out/production/intelli-arc/resources">
+        <copy todir="out/production/clo-jet/resources">
             <fileset dir="resources"/>
         </copy>
-        <copy todir="out/production/intelli-arc/doc">
+        <copy todir="out/production/clo-jet/doc">
             <fileset dir="doc"/>
         </copy>
     </target>

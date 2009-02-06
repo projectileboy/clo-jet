@@ -5,7 +5,10 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeConsumer;
 import com.intellij.openapi.fileTypes.FileTypeFactory;
 import com.intellij.openapi.fileTypes.LanguageFileType;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 
 public class CloJetSupportLoader extends FileTypeFactory implements ApplicationComponent { //, InspectionToolProvider, FileTypeIndentOptionsProvider, IconProvider {
@@ -37,13 +40,12 @@ TODO - See Javascript plugin for good examples of inspection goodies
     //}
 
     public FileType getFileType() {
-
         return CLOJURE;
     }
 
-    //public Icon getIcon(@NotNull final PsiElement element, final int flags) {
-    //    return null;
-    //}
+    public Icon getIcon(@NotNull final PsiElement element, final int flags) {
+        return CloJetIcons.CLOJURE_FILE_ICON;
+    }
 
     public void createFileTypes(@NotNull FileTypeConsumer consumer) {
         // TODO - Is this correct?? The Javadoc is non-existent!!

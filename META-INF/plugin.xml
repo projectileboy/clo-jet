@@ -33,7 +33,16 @@
 
 
     <actions>
-        <!-- Add your actions here -->
+        <action id="ClojureRunSelection" class="com.bitbakery.clojet.actions.RunSelectedTextAction" text="Run Selected Text"
+                description="Run selected text in the REPL" icon="/icons/clojure-icon-16.png">
+            <keyboard-shortcut keymap="$default" first-keystroke="alt S"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </action>
+        <action id="ClojureGoToRepl" class="com.bitbakery.clojet.actions.GoToReplAction" text="Go to REPL"
+                description="Go to the REPL tool window" icon="/icons/clojure-icon-16.png">
+            <keyboard-shortcut keymap="$default" first-keystroke="alt R"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </action>
     </actions>
 
 
