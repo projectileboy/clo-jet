@@ -10,6 +10,10 @@ import com.intellij.execution.process.ProcessTerminatedListener;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.components.ProjectComponent;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.impl.EditorImpl;
+import com.intellij.openapi.editor.impl.EditorComponentImpl;
+import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
@@ -19,8 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -109,7 +112,7 @@ public class ReplToolWindow implements ProjectComponent {
 
             // TODO - Use a non-deprecated version...
             toolWindow = ToolWindowManager.getInstance(myProject).registerToolWindow(message("repl.toolWindowName"), panel, ToolWindowAnchor.BOTTOM);
-            
+
             toolWindow.setAnchor(ToolWindowAnchor.BOTTOM, null);
             toolWindow.setIcon(CloJetIcons.CLOJURE_REPL_ICON);
             toolWindow.setToHideOnEmptyContent(true);
@@ -198,23 +201,28 @@ public class ReplToolWindow implements ProjectComponent {
             tabbedPane.addTab(message("repl.title"), view.getComponent());
 
 
-/*
-            final Editor ed = (Editor) view.getComponent();
+            dumpComponentGraph(view.getComponent(), 0);
+
+            final EditorEx ed = getEditor();
             ed.getContentComponent().addKeyListener(new KeyAdapter() {
                 public void keyTyped(KeyEvent event) {
+                    // TODO - This is probably wrong, actually, but it's a start...
                     ed.getCaretModel().moveToOffset(view.getContentSize());
                 }
             });
-            ed.getContentComponent().addFocusListener(new FocusListener() {
+            ed.getContentComponent().addFocusListener(new FocusAdapter() {
                 public void focusGained(FocusEvent event) {
+                    // TODO - This is probably wrong, actually, but it's a start...
                     ed.getCaretModel().moveToOffset(view.getContentSize());
                 }
-
-                public void focusLost(FocusEvent event) {
-                    // Do nothing
-                }
             });
-*/
+
+            // TODO - Experimental... Play around with what widgetry we'd like to see in the REPL
+            ed.getSettings().setSmartHome(true);
+            ed.getSettings().setVariableInplaceRenameEnabled(true);
+            ed.getSettings().setLineNumbersShown(true);
+            ed.getSettings().setAnimatedScrolling(true);
+            ed.getSettings().setFoldingOutlineShown(true);
 
 /*
             // TODO - Register TransferHandler with the *code* editor; we *never* want to move, only copy. Also, we'd like a custom icon.
@@ -257,22 +265,29 @@ public class ReplToolWindow implements ProjectComponent {
 
         }
 
-        /**
-         * A bit of a hack; needed until JetBrains opens up the ConsoleView class.
-         */
-/*
-        public Editor getEditor() {
+        private void dumpComponentGraph(JComponent component, int tabCount) {
+            String prefix = "";
+            for (int i = 0; i < tabCount; i++) {
+                prefix += "\t";
+            }
+            prefix += "- ";
+            System.out.println(prefix + component.getClass().getName());
 
-            // TODO - Investigate if this would be a better path...
-            // view.getPreferredFocusableComponent().
-
-            final JPanel editorPanel = (JPanel) view.getComponent().getComponent(0);
-            JScrollPane2 scrollPane = (JScrollPane2) editorPanel.getComponents()[1];
-            JViewport port = (JViewport) scrollPane.getComponents()[0];
-            EditorComponentImpl ed = (EditorComponentImpl) port.getComponents()[0];
-            return ed.getEditor();
+            for (Component c : component.getComponents()) {
+                if (c instanceof JComponent) {
+                    dumpComponentGraph((JComponent) c, tabCount + 1);
+                }
+            }
         }
-*/
+
+        /**
+         * A bit of a hack, admittedly...
+         */
+        public EditorEx getEditor() {
+            EditorComponentImpl eci = (EditorComponentImpl) view.getPreferredFocusableComponent();
+            return eci.getEditor();
+        }
+
         public void close() {
             if (processHandler != null) {
                 processHandler.destroyProcess();

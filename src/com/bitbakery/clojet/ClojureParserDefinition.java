@@ -83,6 +83,7 @@ public class ClojureParserDefinition implements ParserDefinition {
 
     @NotNull
     public PsiElement createElement(ASTNode node) {
+        final IElementType type = node.getElementType();        
 /*
         if (type == ArcElementTypes.FILE) {
             return new ThrowSearchUtil.Root(node);
@@ -118,7 +119,6 @@ public class ClojureParserDefinition implements ParserDefinition {
             return new Docstring(node);
         }
 */
-        final IElementType type = node.getElementType();
 
         return new ASTWrapperPsiElement(node);
     }
