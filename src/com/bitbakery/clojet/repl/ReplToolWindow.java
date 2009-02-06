@@ -11,6 +11,7 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.editor.impl.EditorImpl;
 import com.intellij.openapi.editor.impl.EditorComponentImpl;
 import com.intellij.openapi.editor.ex.EditorEx;
@@ -200,27 +201,25 @@ public class ReplToolWindow implements ProjectComponent {
 
             tabbedPane.addTab(message("repl.title"), view.getComponent());
 
-
-            dumpComponentGraph(view.getComponent(), 0);
-
             final EditorEx ed = getEditor();
             ed.getContentComponent().addKeyListener(new KeyAdapter() {
                 public void keyTyped(KeyEvent event) {
                     // TODO - This is probably wrong, actually, but it's a start...
                     ed.getCaretModel().moveToOffset(view.getContentSize());
+                    ed.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE);
                 }
             });
             ed.getContentComponent().addFocusListener(new FocusAdapter() {
                 public void focusGained(FocusEvent event) {
                     // TODO - This is probably wrong, actually, but it's a start...
                     ed.getCaretModel().moveToOffset(view.getContentSize());
+                    ed.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE);
                 }
             });
 
             // TODO - Experimental... Play around with what widgetry we'd like to see in the REPL
             ed.getSettings().setSmartHome(true);
             ed.getSettings().setVariableInplaceRenameEnabled(true);
-            ed.getSettings().setLineNumbersShown(true);
             ed.getSettings().setAnimatedScrolling(true);
             ed.getSettings().setFoldingOutlineShown(true);
 
@@ -263,21 +262,6 @@ public class ReplToolWindow implements ProjectComponent {
             //e.getSettings().setDndEnabled(true);
             //e.getContentComponent().getDropTarget().setActive(true);
 
-        }
-
-        private void dumpComponentGraph(JComponent component, int tabCount) {
-            String prefix = "";
-            for (int i = 0; i < tabCount; i++) {
-                prefix += "\t";
-            }
-            prefix += "- ";
-            System.out.println(prefix + component.getClass().getName());
-
-            for (Component c : component.getComponents()) {
-                if (c instanceof JComponent) {
-                    dumpComponentGraph((JComponent) c, tabCount + 1);
-                }
-            }
         }
 
         /**

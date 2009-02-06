@@ -255,5 +255,8 @@
     <mapping directory="" vcs="Git" />
   </component>
   <component name="WebServicesPlugin" addRequiredLibraries="true" />
+  <component name="uidesigner-configuration">
+    <option name="DEFAULT_LAYOUT_MANAGER" value="GridBagLayout" />
+  </component>
 </project>
 
