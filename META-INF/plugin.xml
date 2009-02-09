@@ -1,4 +1,4 @@
-<!-- <!DOCTYPE idea-plugin PUBLIC "Plugin/DTD" "http://plugins.intellij.net/plugin.dtd"> -->
+ <!DOCTYPE idea-plugin PUBLIC "Plugin/DTD" "http://plugins.intellij.net/plugin.dtd">
 <idea-plugin url="http://github.com">
     <name>Clo-Jet</name>
     <description>Provides support for Clojure, including code editing and a REPL</description>
@@ -19,9 +19,6 @@
         <component>
             <implementation-class>com.bitbakery.clojet.CloJetSupportLoader</implementation-class>
         </component>
-        <component>
-            <implementation-class>com.bitbakery.clojet.config.CloJetConfiguration</implementation-class>
-        </component>
     </application-components>
 
 
@@ -33,20 +30,35 @@
 
 
     <actions>
-        <action id="ClojureRunSelection" class="com.bitbakery.clojet.actions.RunSelectedTextAction" text="Run Selected Text"
-                description="Run selected text in the REPL" icon="/icons/clojure-icon-16.png">
-            <keyboard-shortcut keymap="$default" first-keystroke="alt S"/>
+        <group class="com.bitbakery.clojet.actions.EditorActionGroup" id="ClojureEditorActionGroup">
+            <separator/>
+            <action id="ClojureRunSelection" class="com.bitbakery.clojet.actions.RunSelectedTextAction" icon="/icons/clojure-icon-16.png">
+                <keyboard-shortcut keymap="$default" first-keystroke="alt S"/>
+            </action>
+            <action id="ClojureGoToRepl" class="com.bitbakery.clojet.actions.GoToReplAction" icon="/icons/clojure-icon-16.png">
+                <keyboard-shortcut keymap="$default" first-keystroke="alt R"/>
+            </action>
+            <separator/>
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
-        </action>
-        <action id="ClojureGoToRepl" class="com.bitbakery.clojet.actions.GoToReplAction" text="Go to REPL"
-                description="Go to the REPL tool window" icon="/icons/clojure-icon-16.png">
-            <keyboard-shortcut keymap="$default" first-keystroke="alt R"/>
-            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
-        </action>
+        </group>
+        
+        <group class="com.bitbakery.clojet.actions.ReplActionGroup" id="ClojureReplActionGroup" popup="true">
+            <action id="ClojureAddRepl" class="com.bitbakery.clojet.actions.AddReplAction">
+                <keyboard-shortcut keymap="$default" first-keystroke="alt A"/>
+            </action>
+            <action id="ClojureRemoveRepl" class="com.bitbakery.clojet.actions.RemoveReplAction">
+                <keyboard-shortcut keymap="$default" first-keystroke="alt B"/>
+            </action>
+            <separator/>
+            <action id="ClojureRenameRepl" class="com.bitbakery.clojet.actions.RenameReplAction">
+                <keyboard-shortcut keymap="$default" first-keystroke="alt C"/>
+            </action>
+        </group>
     </actions>
 
-
+    
     <extensions defaultExtensionNs="com.intellij">
+        <applicationConfigurable implementation="com.bitbakery.clojet.config.CloJetConfiguration"/>
         <fileTypeFactory implementation="com.bitbakery.clojet.CloJetSupportLoader"/>
         <syntaxHighlighter key="Clojure" factoryClass="com.bitbakery.clojet.ClojureSyntaxHighlighterProvider"/>
         <lang.braceMatcher language="Clojure" implementationClass="com.bitbakery.clojet.ClojureBraceMatcher"/>

@@ -2,15 +2,14 @@ package com.bitbakery.clojet.config;
 
 import com.bitbakery.clojet.CloJetIcons;
 import com.bitbakery.clojet.CloJetStrings;
-import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -18,15 +17,15 @@ import javax.swing.*;
 /**
  * Persists CloJet configuration settings
  */
-@State(name = "CloJetConfiguration",
-        storages = {@Storage(id = "main", file = "$APP_CONFIG$/Clo-Jet-settings.xml")})
-public class CloJetConfiguration implements ApplicationComponent, Configurable, PersistentStateComponent<CloJetConfiguration> {
-
+@State(name = "CloJetConfiguration", storages = {@Storage(id = "main", file = "$APP_CONFIG$/Clo-Jet-settings.xml")})
+public class CloJetConfiguration implements Configurable, PersistentStateComponent<CloJetConfiguration> {
+    //public class CloJetConfiguration extends BaseConfigurableWithChangeSupport implements SearchableConfigurable {
     public String clojurePath;
 
     private volatile CloJetConfigForm form;
 
 
+/*
     public void initComponent() {
         // Do nothing
     }
@@ -39,6 +38,7 @@ public class CloJetConfiguration implements ApplicationComponent, Configurable, 
     public String getComponentName() {
         return "CloJetConfig";
     }
+*/
 
 
     @Nls
@@ -47,7 +47,7 @@ public class CloJetConfiguration implements ApplicationComponent, Configurable, 
     }
 
     public Icon getIcon() {
-        return CloJetIcons.CLOJURE_LARGE_ICON;
+        return CloJetIcons.CLOJURE_CONFIG_ICON;
     }
 
     @Nullable
@@ -71,6 +71,8 @@ public class CloJetConfiguration implements ApplicationComponent, Configurable, 
     public void apply() throws ConfigurationException {
         if (form != null) {
             form.getData(this);
+
+            // TODO - If the path changed, we actually need to nuke any open REPLs and start over
         }
     }
 
@@ -90,6 +92,7 @@ public class CloJetConfiguration implements ApplicationComponent, Configurable, 
 
     public void loadState(CloJetConfiguration that) {
         this.clojurePath = that.clojurePath;
+        //XmlSerializerUtil.copyBean(that, this);
     }
 
     public String getClojurePath() {
@@ -100,4 +103,5 @@ public class CloJetConfiguration implements ApplicationComponent, Configurable, 
         this.clojurePath = clojurePath;
     }
 }
+
 

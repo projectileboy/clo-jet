@@ -19,8 +19,15 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.options.SettingsEditorConfigurable;
 import com.intellij.util.Icons;
+import com.intellij.ui.content.ContentFactory;
+import com.intellij.ui.content.Content;
+import com.intellij.peer.PeerFactory;
+import com.intellij.ide.actions.CodeEditorActionGroup;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,11 +38,13 @@ import java.util.List;
 
 public class ReplToolWindow implements ProjectComponent {
 
+    private static final String REPL_TOOL_WINDOW_ID = "repl.toolWindow";
+    
     private Project myProject;
     private List<Repl> replList = new ArrayList<Repl>();
     private JTabbedPane tabbedPane;
     private ToolWindow toolWindow;
-    private static final String REPL_TOOL_WINDOW_ID = "repl.toolWindow";
+    private ActionPopupMenu popup;
 
 
     public ReplToolWindow(Project project) {
@@ -102,84 +111,64 @@ public class ReplToolWindow implements ProjectComponent {
     private void initToolWindow() throws ExecutionException, IOException {
         if (myProject != null) {
             tabbedPane = new JTabbedPane(JTabbedPane.BOTTOM);
-            tabbedPane.setComponentPopupMenu(createPopupMenu());
 
             JPanel panel = new JPanel(new BorderLayout());
             panel.add(tabbedPane, BorderLayout.CENTER);
-            panel.add(createButtonPanel(), BorderLayout.WEST);
 
-            Repl repl = createRepl();
-            tabbedPane.addTab(message("repl.title"), repl.view.getComponent());
+            ActionManager am = ActionManager.getInstance();
+            ActionGroup group = (ActionGroup) am.getAction("ClojureReplActionGroup");
+            ActionToolbar toolbar = am.createActionToolbar(message("repl.toolWindowName"), group, false);
+            panel.add(toolbar.getComponent(), BorderLayout.WEST);
 
-            // TODO - Use a non-deprecated version...
-            toolWindow = ToolWindowManager.getInstance(myProject).registerToolWindow(message("repl.toolWindowName"), panel, ToolWindowAnchor.BOTTOM);
-
-            toolWindow.setAnchor(ToolWindowAnchor.BOTTOM, null);
+            toolWindow = ToolWindowManager.getInstance(myProject).registerToolWindow(message("repl.toolWindowName"), false, ToolWindowAnchor.BOTTOM);
+            ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
+            Content content = contentFactory.createContent(panel, null, true);
+            toolWindow.getContentManager().addContent(content);
             toolWindow.setIcon(CloJetIcons.CLOJURE_REPL_ICON);
-            toolWindow.setToHideOnEmptyContent(true);
+            // toolWindow.setToHideOnEmptyContent(true);
+
+            popup = am.createActionPopupMenu(message("repl.toolWindowName"), group);
+            panel.setComponentPopupMenu(popup.getComponent());
+            toolWindow.getComponent().setComponentPopupMenu(popup.getComponent());
+            toolbar.getComponent().setComponentPopupMenu(popup.getComponent());
+
+            createRepl();
         }
     }
 
-    private JPanel createButtonPanel() {
-        // TODO - Modify the buttons to match look and feel of other open/close tab buttons - see "Add" and "Cancel" icons in the IntelliJ resource bundle...
-        // TODO - See other plugins for how we can use the built-in tool window toolbars...
-        JButton addButton = new JButton(Icons.ADD_ICON);
-        addButton.setToolTipText(message("repl.open"));
-        addButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                try {
-                    tabbedPane.addTab(message("repl.title"), createRepl().view.getComponent());
-                    tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
-                } catch (IOException e) {
-                    e.printStackTrace();  // TODO - Some meaningful error handling
-                }
-            }
-        });
-
-        // TODO - We should also close the tab and kill the process if the user enters the right Lisp command (usually, (quit), or some such)
-        JButton removeButton = new JButton(Icons.DELETE_ICON);
-        removeButton.setToolTipText(message("repl.close"));
-        removeButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                int i = tabbedPane.getSelectedIndex();
-                if (i > -1) {
-                    replList.remove(i).close();
-                    tabbedPane.removeTabAt(i);
-                }
-            }
-        });
-
-        JPanel buttonPanel = new JPanel(new GridLayout(5, 1));
-        buttonPanel.add(addButton);
-        buttonPanel.add(removeButton);
-        return buttonPanel;
+    public void createRepl() {
+        try {
+            Repl repl = new Repl();
+            replList.add(repl);
+            
+            tabbedPane.addTab(message("repl.title"), repl.view.getComponent());
+            tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
+        } catch (IOException e) {
+            e.printStackTrace(); // TODO - Do something magnificent
+        }
     }
 
-    private JPopupMenu createPopupMenu() {
-        JPopupMenu menu = new JPopupMenu();
-        JMenuItem item = new JMenuItem(message("repl.rename"));
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                int tabIndex = tabbedPane.getSelectedIndex();
-                if (tabIndex > -1) {
-                    String oldTitle = tabbedPane.getTitleAt(tabIndex);
-                    String newTitle = (String) JOptionPane.showInputDialog(
-                            (Component) actionEvent.getSource(), message("repl.newName"), message("repl.rename"),
-                            JOptionPane.PLAIN_MESSAGE, null, null, oldTitle);
-                    if (newTitle != null) {
-                        tabbedPane.setTitleAt(tabIndex, newTitle);
-                    }
-                }
-            }
-        });
-        menu.add(item);
-        return menu;
+    public void removeCurrentRepl() {
+        int i = tabbedPane.getSelectedIndex();
+        if (i > -1) {
+            replList.remove(i).close();
+            tabbedPane.removeTabAt(i);
+        }
     }
 
-    private Repl createRepl() throws IOException {
-        Repl repl = new Repl();
-        replList.add(repl);
-        return repl;
+    public void renameCurrentRepl() {
+        int tabIndex = tabbedPane.getSelectedIndex();
+        if (tabIndex > -1) {
+            String oldTitle = tabbedPane.getTitleAt(tabIndex);
+
+            // TODO - Need to build my own small tool window dialog, positioned wherever the user clicked
+            String newTitle = (String) JOptionPane.showInputDialog(
+                    tabbedPane.getSelectedComponent(), message("repl.newName"), message("repl.rename"),
+                    JOptionPane.PLAIN_MESSAGE, null, null, oldTitle);
+            if (newTitle != null) {
+                tabbedPane.setTitleAt(tabIndex, newTitle);
+            }
+        }
     }
 
 
@@ -201,6 +190,7 @@ public class ReplToolWindow implements ProjectComponent {
 
             tabbedPane.addTab(message("repl.title"), view.getComponent());
 
+
             final EditorEx ed = getEditor();
             ed.getContentComponent().addKeyListener(new KeyAdapter() {
                 public void keyTyped(KeyEvent event) {
@@ -209,6 +199,8 @@ public class ReplToolWindow implements ProjectComponent {
                     ed.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE);
                 }
             });
+            
+/* TODO - I may want this, but right now it pukes when you "Run Selected Text" from the editor and the result is an error...
             ed.getContentComponent().addFocusListener(new FocusAdapter() {
                 public void focusGained(FocusEvent event) {
                     // TODO - This is probably wrong, actually, but it's a start...
@@ -216,12 +208,17 @@ public class ReplToolWindow implements ProjectComponent {
                     ed.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE);
                 }
             });
+*/
 
             // TODO - Experimental... Play around with what widgetry we'd like to see in the REPL
             ed.getSettings().setSmartHome(true);
             ed.getSettings().setVariableInplaceRenameEnabled(true);
             ed.getSettings().setAnimatedScrolling(true);
             ed.getSettings().setFoldingOutlineShown(true);
+            //e.getSettings().setLineNumbersShown(true);
+
+            ed.getContentComponent().setComponentPopupMenu(popup.getComponent());
+            view.getComponent().setComponentPopupMenu(popup.getComponent());
 
 /*
             // TODO - Register TransferHandler with the *code* editor; we *never* want to move, only copy. Also, we'd like a custom icon.
@@ -251,7 +248,6 @@ public class ReplToolWindow implements ProjectComponent {
             });
 */
 
-            //e.getSettings().setLineNumbersShown(true);
 
             // This is how we can add add'l tooling to our REPL window!
             // e.setHeaderComponent(new JLabel("Only a test"));

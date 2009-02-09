@@ -230,7 +230,7 @@
       <module fileurl="file://$PROJECT_DIR$/clo-jet.iml" filepath="$PROJECT_DIR$/clo-jet.iml" />
     </modules>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA 9712" project-jdk-type="IDEA JDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA 9720" project-jdk-type="IDEA JDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="ResourceManagerContainer">
@@ -255,8 +255,5 @@
     <mapping directory="" vcs="Git" />
   </component>
   <component name="WebServicesPlugin" addRequiredLibraries="true" />
-  <component name="uidesigner-configuration">
-    <option name="DEFAULT_LAYOUT_MANAGER" value="GridBagLayout" />
-  </component>
 </project>
 

@@ -1,5 +1,7 @@
 package com.bitbakery.clojet.repl;
 
+import com.bitbakery.clojet.config.CloJetConfiguration;
+
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessHandler;
@@ -9,6 +11,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.encoding.EncodingManager;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Alarm;
 
 import java.io.*;
@@ -53,9 +56,9 @@ public class ClojureProcessHandler extends ProcessHandler {
     }
 
     public ClojureProcessHandler(Project project) throws IOException {
+        CloJetConfiguration config = ApplicationManager.getApplication().getComponent(CloJetConfiguration.class);
 /*
-        ArcConfiguration arcConfig = ApplicationManager.getApplication().getComponent(ArcConfiguration.class);
-        if (notConfigured(arcConfig)) {
+        if (notConfigured(config)) {
             if (!ShowSettingsUtil.getInstance().editConfigurable(project, arcConfig)) {
                 // TODO - This isn't doing what you intend...
                 JOptionPane.showMessageDialog(null,
@@ -66,36 +69,20 @@ public class ClojureProcessHandler extends ProcessHandler {
         }
 */
 
-        // For now, the executables and command-line args are hard-coded. We may need more flexibility
-        //   in the future (e.g., different Schemes with different args)
-//        String scheme = arcConfig.mzSchemeHome;
-
-/*
-        String scheme = "/Applications/MzScheme v352";
-
-        if (!StringUtil.isEmptyOrSpaces(scheme)) {
-            scheme += isMac ? "/bin/" : "/";
+        String clojureHomePath = "/Users/kurtc/dev/clojure_20080916";
+        if (config != null && !notConfigured(config)) {
+            clojureHomePath = config.clojurePath;
         }
-        scheme += isWindows ? "MzScheme.exe" : "mzscheme";
 
-        String[] myCommandLine = new String[]{scheme, "-m", "-f", arcConfig.arcInitializationFile};
-
-        //String pathname = arcConfig.arcHome;
-        String pathname = "/Users/kurtc/dev/arc2-original";
-*/
-
-        String pathname = "/Users/kurtc/dev/clojure_20080916";
-
-        myProcess = Runtime.getRuntime().exec("java -cp clojure.jar clojure.lang.Repl", null, new File(pathname));
+        // For now, the command-line is hard-coded. We may need more flexibility
+        //  in the future (e.g., different Clojure paths with different args)
+        myProcess = Runtime.getRuntime().exec("java -cp clojure.jar clojure.lang.Repl", null, new File(clojureHomePath));
         myWaitFor = new ProcessWaitFor(myProcess);
     }
 
-/*
-    private boolean notConfigured(ArcConfiguration arcConfig) {
-        return StringUtil.isEmptyOrSpaces(arcConfig.arcHome)
-                || StringUtil.isEmptyOrSpaces(arcConfig.arcInitializationFile);
+    private boolean notConfigured(CloJetConfiguration config) {
+        return StringUtil.isEmptyOrSpaces(config.clojurePath);
     }
-*/
 
     private static class ProcessWaitFor {
         private final com.intellij.util.concurrency.Semaphore myWaitSemaphore = new com.intellij.util.concurrency.Semaphore();
