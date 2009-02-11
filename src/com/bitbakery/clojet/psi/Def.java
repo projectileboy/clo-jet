@@ -13,10 +13,6 @@ import javax.swing.*;
 public class Def extends VariableAssignment {
     public Def(@NotNull final ASTNode node) {
         super(node);
-/*
-        ASTNode[] children = node.getChildren(TokenSet.create(ArcElementTypes.VARIABLE_DEFINITION));
-        name = isEmpty(children) ? "def" : children[0].getText();
-*/
     }
 
     public Icon getIcon(int flags) {

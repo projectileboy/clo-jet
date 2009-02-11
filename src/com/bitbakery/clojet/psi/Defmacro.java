@@ -13,23 +13,17 @@ import javax.swing.*;
 public class Defmacro extends VariableAssignment {
     public Defmacro(@NotNull final ASTNode node) {
         super(node);
-/*
-        ASTNode[] children = node.getChildren(TokenSet.create(ArcElementTypes.VARIABLE_DEFINITION));
-        name = isEmpty(children) ? "def" : children[0].getText();
-*/
     }
 
     public Icon getIcon(int flags) {
         return CloJetIcons.CLOJURE_DEFN_ICON;
     }
 
-/*
     public String getDocstring() {
-        ASTNode[] children = getNode().getChildren(TokenSet.create(ArcElementTypes.DOCSTRING));
+        ASTNode[] children = getNode().getChildren(TokenSet.create(ClojureElementTypes.DOCSTRING));
         if (children != null && children.length > 0) {
             return stripQuotes(children[0].getText());
         }
         return null;
     }
-*/
 }

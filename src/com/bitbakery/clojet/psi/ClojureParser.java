@@ -19,6 +19,7 @@ public class ClojureParser implements PsiParser {
 
     private Stack<PsiBuilder.Marker> markers;
     private Map<IElementType, Parser> parsers;
+    private PsiBuilder builder;
     private DefaultParser defaultParser;
 
     public ClojureParser() {
@@ -30,20 +31,19 @@ public class ClojureParser implements PsiParser {
         parsers.put(LEFT_PAREN, new ParenParser());
         parsers.put(LEFT_SQUARE, new SquareBracketParser());
         parsers.put(LEFT_CURLY, new CurlyBracketParser());
-/*
         parsers.put(DEF, new DefParser());
         parsers.put(DEFN, new DefnParser());
         parsers.put(DEFMACRO, new DefmacroParser());
         parsers.put(FN, new FnParser());
-*/
     }
 
     @NotNull
     public ASTNode parse(IElementType root, PsiBuilder builder) {
+        this.builder = builder; 
         final PsiBuilder.Marker rootMarker = builder.mark();
         try {
             while (!builder.eof()) {
-                getParser(builder.getTokenType()).parse(builder);
+                getParser().parse();
             }
         } catch (EofException e) {
             while (!markers.empty()) {
@@ -54,114 +54,108 @@ public class ClojureParser implements PsiParser {
         return builder.getTreeBuilt();
     }
 
-    private boolean is(PsiBuilder builder, IElementType elementType) {
-        return elementType == builder.getTokenType();
-    }
-
-    private boolean not(PsiBuilder builder, IElementType elementType) {
-        return !is(builder, elementType);
-    }
-
-    private Parser getParser(IElementType tokenType) {
-        Parser p = parsers.get(tokenType);
-        return p != null ? p : defaultParser;
-    }
-
-
-    private void markAndAdvance(PsiBuilder builder) {
-        mark(builder);
-        advanceAndCheck(builder);
-    }
-
-    private void mark(PsiBuilder builder) {
-        markers.push(builder.mark());
-    }
-
-    private void advanceAndCheck(PsiBuilder builder) {
-        advance(builder);
-        if (builder.eof()) {
-            throw new EofException();
-        }
-    }
-
-    private void advance(PsiBuilder builder) {
-        System.out.println(builder.getTokenText());
-        builder.advanceLexer();
-    }
-
-    private void done(IElementType type) {
-        markers.pop().done(type);
-    }
-
     private class CurlyBracketParser implements Parser {
-        public void parse(PsiBuilder builder) {
-            markAndAdvance(builder);
-            while (not(builder, RIGHT_CURLY)) {
-                advanceAndCheck(builder);
+        public void parse() {
+            markAndAdvance();
+            while (notAt(RIGHT_CURLY)) {
+                advanceAndCheck();
             }
-            advance(builder);
+            builder.advanceLexer();
             done(MAP);
         }
     }
 
     private class SquareBracketParser implements Parser {
-        public void parse(PsiBuilder builder) {
-            markAndAdvance(builder);
-            while (not(builder, RIGHT_SQUARE)) {
-                advanceAndCheck(builder);
+        public void parse() {
+            markAndAdvance();
+            while (notAt(RIGHT_SQUARE)) {
+                advanceAndCheck();
             }
-            advance(builder);
+            builder.advanceLexer();
             done(VECTOR);
         }
     }
 
     private class ParenParser implements Parser {
-        public void parse(PsiBuilder builder) {
-            markAndAdvance(builder);
+        public void parse() {
+            markAndAdvance();
 
             IElementType type = EXPRESSION;
-            if (is(builder, DEF)) type = DEFINITION;
-            else if (is(builder, DEFN)) type = FUNCTION_DEFINITION;
-            else if (is(builder, DEFMACRO)) type = MACRO_DEFINITION;
-            else if (is(builder, FN)) type = ANONYMOUS_FUNCTION_DEFINITION;
+            if (isAt(DEF)) type = DEFINITION;
+            else if (isAt(DEFN)) type = FUNCTION_DEFINITION;
+            else if (isAt(DEFMACRO)) type = MACRO_DEFINITION;
+            else if (isAt(FN)) type = ANONYMOUS_FUNCTION_DEFINITION;
 
             // TODO - The first element requires special handling - could be def, defn, defmacro,...
-            while (not(builder, RIGHT_PAREN)) {
-                getParser(builder.getTokenType()).parse(builder);
+            while (notAt(RIGHT_PAREN)) {
+                getParser().parse();
             }
-            advance(builder);
+            builder.advanceLexer();
             done(type);
         }
     }
 
     private class DefmacroParser implements Parser {
-        public void parse(PsiBuilder builder) {
+        public void parse() {
+            // We are pointing at 'defmacro'
+            advanceAndCheck();
+
+            parseVariableDefinition();
+            parseDocstring();
+
+            while (notAt(RIGHT_PAREN)) {
+                getParser().parse(); // TODO - This will properly parse the parameters, but it won't recognize them as parameters... hmm....
+                // TODO - We don't handle macro-y things at all (backquoted statements, etc.)
+            }
         }
     }
 
     private class DefnParser implements Parser {
-        public void parse(PsiBuilder builder) {
+        public void parse() {
+            // We are pointing at 'defn'
+            advanceAndCheck();
+
+            parseVariableDefinition();
+            parseDocstring();
+
+            while (notAt(RIGHT_PAREN)) {
+                getParser().parse(); // TODO - This will properly parse the parameters, but it won't recognize them as parameters... hmm....
+            }
         }
     }
 
     private class DefParser implements Parser {
-        public void parse(PsiBuilder builder) {
+        public void parse() {
+            // We are pointing at 'def'
+            advanceAndCheck();
+
+            parseVariableDefinition();
+
+            while (notAt(RIGHT_PAREN)) {
+                getParser().parse();
+            }
         }
     }
 
     private class FnParser implements Parser {
-        public void parse(PsiBuilder builder) {
+        public void parse() {
+            // We are pointing at 'fn'
+            advanceAndCheck();
+
+            while (notAt(RIGHT_PAREN)) {
+                getParser().parse(); // TODO - This will properly parse the parameters, but it won't recognize them as parameters... hmm....
+            }
         }
     }
 
     private class ExpressionParser implements Parser {
-        public void parse(PsiBuilder builder) {
+        public void parse() {
         }
     }
 
     private class DefaultParser implements Parser {
-        public void parse(PsiBuilder builder) {
-            advanceAndCheck(builder);
+        public void parse() {
+            advanceAndCheck();
         }
     }
 
@@ -170,6 +164,59 @@ public class ClojureParser implements PsiParser {
     }
 
     private interface Parser {
-        public void parse(PsiBuilder builder);
+        public void parse();
     }
+
+    private void parseVariableDefinition() {
+        if (isAt(SYMBOL)) {
+            markAndAdvance(VARIABLE_DEFINITION);
+        } else {
+            builder.error("Expected function name");
+        }
+    }
+
+    private void parseDocstring() {
+        if (isAt(STRING_LITERAL)) {
+            markAndAdvance(DOCSTRING);
+        }
+    }
+
+    private boolean isAt(IElementType elementType) {
+        return elementType == builder.getTokenType();
+    }
+
+    private boolean notAt(IElementType elementType) {
+        return !isAt(elementType);
+    }
+
+    private Parser getParser() {
+        Parser p = parsers.get(builder.getTokenType());
+        return p != null ? p : defaultParser;
+    }
+
+
+    private void markAndAdvance(IElementType type) {
+        markAndAdvance();
+        done(type);
+    }
+
+    private void markAndAdvance() {
+        mark();
+        advanceAndCheck();
+    }
+
+    private void mark() {
+        markers.push(builder.mark());
+    }
+
+    private void advanceAndCheck() {
+        builder.advanceLexer();
+        if (builder.eof()) {
+            throw new EofException();
+        }
+    }
+
+    private void done(IElementType type) {
+        markers.pop().done(type);
+    }    
 }

@@ -101,9 +101,9 @@ public class ClojureParserDefinition implements ParserDefinition {
             return new RestParameter(node);
         } else if (type == ArcElementTypes.PARAMETER) {
             return new Parameter(node);
-        } else if (type == ArcElementTypes.VARIABLE_DEFINITION) {
+        } */ else if (type == ClojureElementTypes.VARIABLE_DEFINITION) {
             return new VariableDefinition(node);
-        } else if (type == ArcElementTypes.VARIABLE_REFERENCE) {
+        } /* else if (type == ArcElementTypes.VARIABLE_REFERENCE) {
             return new VariableReference(node);
         } else if (type == ArcElementTypes.LET_BLOCK) {
             return new Let(node);
@@ -111,10 +111,9 @@ public class ClojureParserDefinition implements ParserDefinition {
             return new With(node);
         } else if (type == ArcElementTypes.PARAMETER_LIST) {
             return new ParameterList(node);
-        } else if (type == ArcElementTypes.DOCSTRING) {
+        } */else if (type == ClojureElementTypes.DOCSTRING) {
             return new Docstring(node);
         }
-*/
 
         return new ASTWrapperPsiElement(node);
     }

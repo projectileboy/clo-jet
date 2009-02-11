@@ -21,17 +21,18 @@ public interface ClojureElementTypes {
 /*
     IElementType LET_BLOCK = new ArcElementType("let");
     IElementType WITH_BLOCK = new ArcElementType("with");
-
-    IElementType DOCSTRING = new ArcElementType("docstring");
-
+*/
+    IElementType DOCSTRING = new ClojureElementType("docstring");
+/*
     IElementType QUOTED_EXPRESSION = new ArcElementType("quoted expression");
     IElementType BACKQUOTED_EXPRESSION = new ArcElementType("backquoted expression");
     IElementType COMMA_EXPRESSION = new ArcElementType("comma expression");
     IElementType COMMA_AT_EXPRESSION = new ArcElementType("comma-at expression");
 
     IElementType VARIABLE_ASSIGNMENT = new ArcElementType("variable assignment");
-    IElementType VARIABLE_DEFINITION = new ArcElementType("variable definition");
-
+*/
+    IElementType VARIABLE_DEFINITION = new ClojureElementType("variable definition");
+/*
     IElementType PARAMETER = new ArcElementType("parameter");
     IElementType REST_PARAMETER = new ArcElementType("rest parameter");
     IElementType OPTIONAL_PARAMETER = new ArcElementType("optional parameter");

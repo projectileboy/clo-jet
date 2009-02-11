@@ -6,6 +6,7 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
+import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -25,10 +26,8 @@ public class VariableAssignment extends Expression implements PsiNamedElement {
 
     public VariableAssignment(ASTNode node) {
         super(node);
-/*
-        ASTNode[] children = node.getChildren(TokenSet.create(ArcElementTypes.VARIABLE_DEFINITION));
+        ASTNode[] children = node.getChildren(TokenSet.create(ClojureElementTypes.VARIABLE_DEFINITION));
         name = isEmpty(children) ? "=" : children[0].getText();
-*/
     }
 
     public String getName() {

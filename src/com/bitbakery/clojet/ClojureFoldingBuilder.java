@@ -5,8 +5,9 @@ import com.intellij.lang.folding.FoldingDescriptor;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.Document;
 import com.intellij.psi.PsiElement;
-import com.bitbakery.clojet.psi.ClojureElementTypes;
 import com.bitbakery.clojet.psi.Defn;
+import com.bitbakery.clojet.psi.Defmacro;
+import static com.bitbakery.clojet.psi.ClojureElementTypes.*;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -17,21 +18,21 @@ import java.util.ArrayList;
 public class ClojureFoldingBuilder implements FoldingBuilder {
 
     public String getPlaceholderText(ASTNode node) {
-        if (node.getElementType() == ClojureElementTypes.FUNCTION_DEFINITION) {
+        if (node.getElementType() == FUNCTION_DEFINITION) {
             Defn def = (Defn) node.getPsi();
             return "(defn " + def.getName() + " ...)";
-        } /*else if (node.getElementType() == MACRO_DEFINITION) {
-            Mac def = (Mac) node.getPsi();
-            return "(mac " + def.getName() + " ...)";
-        } else if (node.getElementType() == SINGLE_ARG_ANONYMOUS_FUNCTION_DEFINITION) {
+        } else if (node.getElementType() == MACRO_DEFINITION) {
+            Defmacro mac = (Defmacro) node.getPsi();
+            return "(defmacro " + mac.getName() + " ...)";
+        } /*else if (node.getElementType() == SINGLE_ARG_ANONYMOUS_FUNCTION_DEFINITION) {
             return "[...]";
-        } else if (node.getElementType() == ANONYMOUS_FUNCTION_DEFINITION) {
+        } */else if (node.getElementType() == ANONYMOUS_FUNCTION_DEFINITION) {
             return "(fn ...)";
-        } else if (node.getElementType() == BLOCK_COMMENT) {
+        } /*else if (node.getElementType() == BLOCK_COMMENT) {
             // TODO - Adjacent line comments should be foldable as a single block comment
             String text = node.getText();
             return text.length() > 15 ? text.substring(0, 15) + "..." : text;
-        }*/
+        } */
         return null;
     }
 
@@ -50,7 +51,7 @@ public class ClojureFoldingBuilder implements FoldingBuilder {
      * We have to touch the PSI tree to get the folding to show up when we first open a file
      */
     private void touchTree(ASTNode node) {
-        if (node.getElementType() == ClojureElementTypes.FILE) {
+        if (node.getElementType() == FILE) {
             final PsiElement firstChild = node.getPsi().getFirstChild();
         }
     }
@@ -68,14 +69,11 @@ public class ClojureFoldingBuilder implements FoldingBuilder {
     }
 
     private boolean isFoldableNode(ASTNode node) {
-        return false;
-/*
         return (node.getElementType() == FUNCTION_DEFINITION)
                 || (node.getElementType() == MACRO_DEFINITION)
-                || (node.getElementType() == SINGLE_ARG_ANONYMOUS_FUNCTION_DEFINITION)
-                || (node.getElementType() == ANONYMOUS_FUNCTION_DEFINITION)
-                || (node.getElementType() == BLOCK_COMMENT);
-*/
+                || (node.getElementType() == ANONYMOUS_FUNCTION_DEFINITION);
+//                || (node.getElementType() == SINGLE_ARG_ANONYMOUS_FUNCTION_DEFINITION)
+//                || (node.getElementType() == BLOCK_COMMENT);
     }
 }
 

@@ -23,6 +23,8 @@
         <lang.foldingBuilder language="Clojure" implementationClass="com.bitbakery.clojet.ClojureFoldingBuilder"/>
         <lang.languageProvider language="Clojure" implementationClass="com.bitbakery.clojet.ClojureLanguage"/>
         <lang.parserDefinition language="Clojure" implementationClass="com.bitbakery.clojet.ClojureParserDefinition"/>
+        <lang.psiStructureViewFactory language="Clojure"
+                                      implementationClass="com.bitbakery.clojet.ClojureStructureViewBuilderFactory"/>
     </extensions>
 
 
