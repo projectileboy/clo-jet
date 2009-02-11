@@ -78,6 +78,9 @@ StringLiteral=\"([^\\\"]|{EscapeSequence})*(\"|\\)?
 "("             { return LEFT_PAREN; }
 ")"             { return RIGHT_PAREN; }
 
+"{"             { return LEFT_CURLY; }
+"}"             { return RIGHT_CURLY; }
+
 "["             { return LEFT_SQUARE; }
 "]"             { return RIGHT_SQUARE; }
 

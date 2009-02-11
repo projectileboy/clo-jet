@@ -7,7 +7,6 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
@@ -19,7 +18,6 @@ import javax.swing.*;
  */
 @State(name = "CloJetConfiguration", storages = {@Storage(id = "main", file = "$APP_CONFIG$/Clo-Jet-settings.xml")})
 public class CloJetConfiguration implements Configurable, PersistentStateComponent<CloJetConfiguration> {
-    //public class CloJetConfiguration extends BaseConfigurableWithChangeSupport implements SearchableConfigurable {
     public String clojurePath;
 
     private volatile CloJetConfigForm form;

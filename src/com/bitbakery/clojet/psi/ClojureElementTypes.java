@@ -2,16 +2,23 @@ package com.bitbakery.clojet.psi;
 
 import com.bitbakery.clojet.ClojureFileType;
 import com.intellij.psi.tree.IFileElementType;
+import com.intellij.psi.tree.IElementType;
 
 public interface ClojureElementTypes {
     IFileElementType FILE = new IFileElementType(ClojureFileType.CLOJURE);
 
+    IElementType DEFINITION = new ClojureElementType("def");
+    IElementType FUNCTION_DEFINITION = new ClojureElementType("defn");
+    IElementType EXPRESSION = new ClojureElementType("()");
+    IElementType VECTOR = new ClojureElementType("[]");
+    IElementType MAP = new ClojureElementType("{}");
 /*
     IElementType SINGLE_ARG_ANONYMOUS_FUNCTION_DEFINITION = new ArcElementType("single arg fn");
-    IElementType ANONYMOUS_FUNCTION_DEFINITION = new ArcElementType("fn");
-    IElementType FUNCTION_DEFINITION = new ArcElementType("def");
-    IElementType MACRO_DEFINITION = new ArcElementType("mac");
+*/
 
+    IElementType ANONYMOUS_FUNCTION_DEFINITION = new ClojureElementType("fn");
+    IElementType MACRO_DEFINITION = new ClojureElementType("defmacro");
+/*
     IElementType LET_BLOCK = new ArcElementType("let");
     IElementType WITH_BLOCK = new ArcElementType("with");
 
@@ -21,7 +28,6 @@ public interface ClojureElementTypes {
     IElementType BACKQUOTED_EXPRESSION = new ArcElementType("backquoted expression");
     IElementType COMMA_EXPRESSION = new ArcElementType("comma expression");
     IElementType COMMA_AT_EXPRESSION = new ArcElementType("comma-at expression");
-    IElementType EXPRESSION = new ArcElementType("s expression");
 
     IElementType VARIABLE_ASSIGNMENT = new ArcElementType("variable assignment");
     IElementType VARIABLE_DEFINITION = new ArcElementType("variable definition");

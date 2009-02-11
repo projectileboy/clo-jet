@@ -2,9 +2,7 @@ package com.bitbakery.clojet;
 
 import com.bitbakery.clojet.lexer.ClojureLexer;
 import com.bitbakery.clojet.lexer.ClojureTokenTypes;
-import com.bitbakery.clojet.psi.ClojureElementTypes;
-import com.bitbakery.clojet.psi.ClojureFile;
-import com.bitbakery.clojet.psi.ClojureParser;
+import com.bitbakery.clojet.psi.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.ParserDefinition;
@@ -20,7 +18,7 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Defines the implementation of our Arc file parser. Note that the real parsing guts are in ArcParser.
+ * Defines the implementation of our Clojure file parser. Note that the real parsing guts are in ClojureParser.
  */
 public class ClojureParserDefinition implements ParserDefinition {
     @NotNull
@@ -83,21 +81,19 @@ public class ClojureParserDefinition implements ParserDefinition {
 
     @NotNull
     public PsiElement createElement(ASTNode node) {
-        final IElementType type = node.getElementType();        
-/*
-        if (type == ArcElementTypes.FILE) {
-            return new ThrowSearchUtil.Root(node);
-        } else if (type == ArcElementTypes.FUNCTION_DEFINITION) {
-            return new Def(node);
-        } else if (type == ArcElementTypes.ANONYMOUS_FUNCTION_DEFINITION) {
+        final IElementType type = node.getElementType();
+
+        if (type == ClojureElementTypes.FUNCTION_DEFINITION) {
+            return new Defn(node);
+        } else if (type == ClojureElementTypes.ANONYMOUS_FUNCTION_DEFINITION) {
             return new Fn(node);
-        } else if (type == ArcElementTypes.SINGLE_ARG_ANONYMOUS_FUNCTION_DEFINITION) {
-            return new SingleArgFn(node);
-        } else if (type == ArcElementTypes.MACRO_DEFINITION) {
-            return new Mac(node);
-        } else if (type == ArcElementTypes.EXPRESSION) {
+        } else if (type == ClojureElementTypes.DEFINITION) {
+            return new Def(node);
+        } else if (type == ClojureElementTypes.MACRO_DEFINITION) {
+            return new Defmacro(node);
+        } else if (type == ClojureElementTypes.EXPRESSION) {
             return new Expression(node);
-        } else if (type == ArcElementTypes.VARIABLE_ASSIGNMENT) {
+        } /* else if (type == ArcElementTypes.VARIABLE_ASSIGNMENT) {
             return new VariableAssignment(node);
         } else if (type == ArcElementTypes.OPTIONAL_PARAMETER) {
             return new OptionalParameter(node);

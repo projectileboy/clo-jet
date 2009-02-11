@@ -6,6 +6,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.Document;
 import com.intellij.psi.PsiElement;
 import com.bitbakery.clojet.psi.ClojureElementTypes;
+import com.bitbakery.clojet.psi.Defn;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -16,11 +17,10 @@ import java.util.ArrayList;
 public class ClojureFoldingBuilder implements FoldingBuilder {
 
     public String getPlaceholderText(ASTNode node) {
-/*
-        if (node.getElementType() == FUNCTION_DEFINITION) {
-            Def def = (Def) node.getPsi();
-            return "(def " + def.getName() + " ...)";
-        } else if (node.getElementType() == MACRO_DEFINITION) {
+        if (node.getElementType() == ClojureElementTypes.FUNCTION_DEFINITION) {
+            Defn def = (Defn) node.getPsi();
+            return "(defn " + def.getName() + " ...)";
+        } /*else if (node.getElementType() == MACRO_DEFINITION) {
             Mac def = (Mac) node.getPsi();
             return "(mac " + def.getName() + " ...)";
         } else if (node.getElementType() == SINGLE_ARG_ANONYMOUS_FUNCTION_DEFINITION) {
@@ -31,8 +31,7 @@ public class ClojureFoldingBuilder implements FoldingBuilder {
             // TODO - Adjacent line comments should be foldable as a single block comment
             String text = node.getText();
             return text.length() > 15 ? text.substring(0, 15) + "..." : text;
-        }
-*/
+        }*/
         return null;
     }
 

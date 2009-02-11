@@ -14,6 +14,17 @@
 
     <resource-bundle>com.bitbakery.clojet.CloJetStrings</resource-bundle>
 
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationConfigurable implementation="com.bitbakery.clojet.config.CloJetConfiguration"/>
+        <fileTypeFactory implementation="com.bitbakery.clojet.CloJetSupportLoader"/>
+        <syntaxHighlighter key="Clojure" factoryClass="com.bitbakery.clojet.ClojureSyntaxHighlighterProvider"/>
+        <lang.braceMatcher language="Clojure" implementationClass="com.bitbakery.clojet.ClojureBraceMatcher"/>
+        <lang.commenter language="Clojure" implementationClass="com.bitbakery.clojet.ClojureCommenter"/>
+        <lang.foldingBuilder language="Clojure" implementationClass="com.bitbakery.clojet.ClojureFoldingBuilder"/>
+        <lang.languageProvider language="Clojure" implementationClass="com.bitbakery.clojet.ClojureLanguage"/>
+        <lang.parserDefinition language="Clojure" implementationClass="com.bitbakery.clojet.ClojureParserDefinition"/>
+    </extensions>
+
 
     <application-components>
         <component>
@@ -57,16 +68,4 @@
     </actions>
 
     
-    <extensions defaultExtensionNs="com.intellij">
-        <applicationConfigurable implementation="com.bitbakery.clojet.config.CloJetConfiguration"/>
-        <fileTypeFactory implementation="com.bitbakery.clojet.CloJetSupportLoader"/>
-        <syntaxHighlighter key="Clojure" factoryClass="com.bitbakery.clojet.ClojureSyntaxHighlighterProvider"/>
-        <lang.braceMatcher language="Clojure" implementationClass="com.bitbakery.clojet.ClojureBraceMatcher"/>
-        <lang.commenter language="Clojure" implementationClass="com.bitbakery.clojet.ClojureCommenter"/>
-        <lang.foldingBuilder language="Clojure" implementationClass="com.bitbakery.clojet.ClojureFoldingBuilder"/>
-        <lang.languageProvider language="Clojure" implementationClass="com.bitbakery.clojet.ClojureLanguage"/>
-        <lang.parserDefinition language="Clojure" implementationClass="com.bitbakery.clojet.ClojureParserDefinition"/>
-    </extensions>
-
-
 </idea-plugin>

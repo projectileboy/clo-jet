@@ -19,6 +19,9 @@ public interface ClojureTokenTypes {
     IElementType LEFT_PAREN = new ClojureElementType("(");
     IElementType RIGHT_PAREN = new ClojureElementType(")");
 
+    IElementType LEFT_CURLY = new ClojureElementType("{");
+    IElementType RIGHT_CURLY = new ClojureElementType("}");
+
     IElementType LEFT_SQUARE = new ClojureElementType("[");
     IElementType RIGHT_SQUARE = new ClojureElementType("]");
     IElementType TILDE = new ClojureElementType("~");
