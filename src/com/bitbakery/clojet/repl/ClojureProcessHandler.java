@@ -1,7 +1,7 @@
 package com.bitbakery.clojet.repl;
 
-import com.bitbakery.clojet.config.CloJetConfiguration;
-
+import com.bitbakery.clojet.CloJetStrings;
+import com.bitbakery.clojet.config.CloJetSettings;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessHandler;
@@ -10,10 +10,12 @@ import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.encoding.EncodingManager;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.encoding.EncodingManager;
+import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.util.Alarm;
 
+import javax.swing.*;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.concurrent.*;
@@ -55,33 +57,26 @@ public class ClojureProcessHandler extends ProcessHandler {
         }
     }
 
-    public ClojureProcessHandler(Project project) throws IOException {
-        CloJetConfiguration config = ApplicationManager.getApplication().getComponent(CloJetConfiguration.class);
-/*
-        if (notConfigured(config)) {
-            if (!ShowSettingsUtil.getInstance().editConfigurable(project, arcConfig)) {
-                // TODO - This isn't doing what you intend...
-                JOptionPane.showMessageDialog(null,
-                        message("config.error.replNotConfiguredMessage"),
-                        message("config.error.replNotConfiguredTitle"),
-                        JOptionPane.WARNING_MESSAGE);
-            }
+    public ClojureProcessHandler() throws IOException, ConfigurationException {
+/* TODO - This is broken for some stupid reason...
+        if (notConfigured()) {
+            ShowSettingsUtil.getInstance().showSettingsDialog(project, CloJetConfigurable.class);
         }
 */
 
-        String clojureHomePath = "/Users/kurtc/dev/clojure_20080916";
-        if (config != null && !notConfigured(config)) {
-            clojureHomePath = config.clojurePath;
+        if (notConfigured()) {
+            throw new ConfigurationException("Can't create Clojure REPL process");
+        } else {
+            // For now, the command-line is hard-coded. We may need more flexibility
+            //  in the future (e.g., different Clojure paths with different args)
+            myProcess = Runtime.getRuntime().exec("java -cp clojure.jar clojure.lang.Repl", null,
+                    new File(CloJetSettings.getInstance().CLOJURE_HOME));
+            myWaitFor = new ProcessWaitFor(myProcess);
         }
-
-        // For now, the command-line is hard-coded. We may need more flexibility
-        //  in the future (e.g., different Clojure paths with different args)
-        myProcess = Runtime.getRuntime().exec("java -cp clojure.jar clojure.lang.Repl", null, new File(clojureHomePath));
-        myWaitFor = new ProcessWaitFor(myProcess);
     }
 
-    private boolean notConfigured(CloJetConfiguration config) {
-        return StringUtil.isEmptyOrSpaces(config.clojurePath);
+    private boolean notConfigured() {
+        return StringUtil.isEmptyOrSpaces(CloJetSettings.getInstance().CLOJURE_HOME);
     }
 
     private static class ProcessWaitFor {

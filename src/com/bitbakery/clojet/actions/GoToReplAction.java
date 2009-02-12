@@ -7,7 +7,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
  */
 public class GoToReplAction extends ClojureAction {
 
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(final AnActionEvent e) {
         getReplToolWindow(e).requestFocus();
     }
 }

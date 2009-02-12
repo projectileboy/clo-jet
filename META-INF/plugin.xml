@@ -1,5 +1,5 @@
  <!DOCTYPE idea-plugin PUBLIC "Plugin/DTD" "http://plugins.intellij.net/plugin.dtd">
-<idea-plugin url="http://github.com">
+<idea-plugin url="http://github.com/projectileboy/clo-jet">
     <name>Clo-Jet</name>
     <description>Provides support for Clojure, including code editing and a REPL</description>
     <version>0.1</version>
@@ -9,13 +9,24 @@
 
     <!-- TODO -->
     <helpset></helpset>
-    <change-notes></change-notes>
+
+    <change-notes>
+        <![CDATA[
+                0.1 - 2009.02.12<br>
+                * Initial alpha release! w00t!<br>
+                * Syntax highlighting<br>
+                * Simple structure view showing defns and defmacros<br>
+                * Code folding<br>
+                * Tabbed REPL<br>
+        ]]>
+    </change-notes>
 
 
     <resource-bundle>com.bitbakery.clojet.CloJetStrings</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationConfigurable implementation="com.bitbakery.clojet.config.CloJetConfiguration"/>
+
+
         <fileTypeFactory implementation="com.bitbakery.clojet.CloJetSupportLoader"/>
         <syntaxHighlighter key="Clojure" factoryClass="com.bitbakery.clojet.ClojureSyntaxHighlighterProvider"/>
         <lang.braceMatcher language="Clojure" implementationClass="com.bitbakery.clojet.ClojureBraceMatcher"/>
@@ -25,6 +36,11 @@
         <lang.parserDefinition language="Clojure" implementationClass="com.bitbakery.clojet.ClojureParserDefinition"/>
         <lang.psiStructureViewFactory language="Clojure"
                                       implementationClass="com.bitbakery.clojet.ClojureStructureViewBuilderFactory"/>
+
+
+        <applicationConfigurable implementation="com.bitbakery.clojet.config.CloJetConfigurable"/>
+        <applicationService serviceInterface="com.bitbakery.clojet.config.CloJetSettings"
+                            serviceImplementation="com.bitbakery.clojet.config.CloJetSettings"/>
     </extensions>
 
 

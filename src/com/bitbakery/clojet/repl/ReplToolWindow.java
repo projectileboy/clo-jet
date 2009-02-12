@@ -1,6 +1,7 @@
 package com.bitbakery.clojet.repl;
 
 import com.bitbakery.clojet.CloJetIcons;
+import com.bitbakery.clojet.CloJetStrings;
 import static com.bitbakery.clojet.CloJetStrings.message;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.filters.TextConsoleBuilder;
@@ -9,29 +10,27 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.process.ProcessTerminatedListener;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
+import com.intellij.openapi.actionSystem.ActionGroup;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.ActionPopupMenu;
+import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.components.ProjectComponent;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ScrollType;
-import com.intellij.openapi.editor.impl.EditorImpl;
-import com.intellij.openapi.editor.impl.EditorComponentImpl;
 import com.intellij.openapi.editor.ex.EditorEx;
+import com.intellij.openapi.editor.impl.EditorComponentImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
-import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.options.SettingsEditorConfigurable;
-import com.intellij.util.Icons;
-import com.intellij.ui.content.ContentFactory;
+import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.ui.content.Content;
-import com.intellij.peer.PeerFactory;
-import com.intellij.ide.actions.CodeEditorActionGroup;
+import com.intellij.ui.content.ContentFactory;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +38,7 @@ import java.util.List;
 public class ReplToolWindow implements ProjectComponent {
 
     private static final String REPL_TOOL_WINDOW_ID = "repl.toolWindow";
-    
+
     private Project myProject;
     private List<Repl> replList = new ArrayList<Repl>();
     private JTabbedPane tabbedPane;
@@ -140,11 +139,16 @@ public class ReplToolWindow implements ProjectComponent {
         try {
             Repl repl = new Repl();
             replList.add(repl);
-            
+
             tabbedPane.addTab(message("repl.title"), repl.view.getComponent());
             tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
         } catch (IOException e) {
             e.printStackTrace(); // TODO - Do something magnificent
+        } catch (ConfigurationException e) {
+            JOptionPane.showMessageDialog(null,
+                    CloJetStrings.message("config.error.replNotConfiguredMessage"),
+                    CloJetStrings.message("config.error.replNotConfiguredTitle"),
+                    JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -161,9 +165,9 @@ public class ReplToolWindow implements ProjectComponent {
         if (tabIndex > -1) {
             String oldTitle = tabbedPane.getTitleAt(tabIndex);
 
-            // TODO - Need to build my own small tool window dialog, positioned wherever the user clicked
+            // TODO - Should build my own small tool window dialog, positioned wherever the user clicked
             String newTitle = (String) JOptionPane.showInputDialog(
-                    tabbedPane.getSelectedComponent(), message("repl.newName"), message("repl.rename"),
+                    tabbedPane.getSelectedComponent(), null, message("repl.rename"),
                     JOptionPane.PLAIN_MESSAGE, null, null, oldTitle);
             if (newTitle != null) {
                 tabbedPane.setTitleAt(tabIndex, newTitle);
@@ -176,14 +180,14 @@ public class ReplToolWindow implements ProjectComponent {
         public ConsoleView view;
         private ProcessHandler processHandler;
 
-        public Repl() throws IOException {
+        public Repl() throws IOException, ConfigurationException {
             TextConsoleBuilder builder = TextConsoleBuilderFactory.getInstance().createBuilder(myProject);
             view = builder.getConsole();
 
             // TODO - What does the "help ID" give us??
             // view.setHelpId("Kurt's Help ID");
 
-            processHandler = new ClojureProcessHandler(myProject);
+            processHandler = new ClojureProcessHandler();
             ProcessTerminatedListener.attach(processHandler);
             processHandler.startNotify();
             view.attachToProcess(processHandler);
@@ -199,7 +203,7 @@ public class ReplToolWindow implements ProjectComponent {
                     ed.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE);
                 }
             });
-            
+
 /* TODO - I may want this, but right now it pukes when you "Run Selected Text" from the editor and the result is an error...
             ed.getContentComponent().addFocusListener(new FocusAdapter() {
                 public void focusGained(FocusEvent event) {

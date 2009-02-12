@@ -51,6 +51,12 @@ public class ClojureParser implements PsiParser {
             }
         }
         rootMarker.done(root);
+
+        // Just in case... I can't find any documentation telling me whether or not
+        //   this parser is re-used, or even it must be thread-safe!
+        this.builder = null;
+        this.markers.clear();
+        
         return builder.getTreeBuilt();
     }
 

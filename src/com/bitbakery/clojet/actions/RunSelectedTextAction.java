@@ -10,18 +10,17 @@ import com.intellij.openapi.util.text.StringUtil;
  */
 public class RunSelectedTextAction extends ClojureAction {
 
-    public void actionPerformed(AnActionEvent e) {
-        Editor ed = e.getData(DataKeys.EDITOR);
+    public void actionPerformed(final AnActionEvent e) {
+        final Editor ed = e.getData(DataKeys.EDITOR);
         if (ed == null) {
             return;
         }
         String text = ed.getSelectionModel().getSelectedText();
+
         if (StringUtil.isEmptyOrSpaces(text)) {
             return;
         }
-
         getReplToolWindow(e).writeToCurrentRepl(text);
     }
-
 }
 
