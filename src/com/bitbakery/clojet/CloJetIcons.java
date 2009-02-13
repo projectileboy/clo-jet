@@ -20,6 +20,6 @@ public interface CloJetIcons {
     final Icon CLOJURE_FILE_ICON = IconLoader.findIcon(DATA_PATH + "clojure-icon-16.png");
 
     final Icon CLOJURE_DEF_ICON = IconLoader.findIcon(DATA_PATH + "clojure-icon-16.png");
-    final Icon CLOJURE_DEFN_ICON = IconLoader.findIcon(DATA_PATH + "clojure-icon-16.png");
-    final Icon CLOJURE_DEFMACRO_ICON = IconLoader.findIcon(DATA_PATH + "clojure-icon-16.png");
+    final Icon CLOJURE_DEFN_ICON = IconLoader.findIcon(DATA_PATH + "clojure-icon-defn.png");
+    final Icon CLOJURE_DEFMACRO_ICON = IconLoader.findIcon(DATA_PATH + "clojure-icon-defmacro.png");
 }

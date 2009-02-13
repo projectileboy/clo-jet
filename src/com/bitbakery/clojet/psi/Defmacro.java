@@ -16,7 +16,7 @@ public class Defmacro extends VariableAssignment {
     }
 
     public Icon getIcon(int flags) {
-        return CloJetIcons.CLOJURE_DEFN_ICON;
+        return CloJetIcons.CLOJURE_DEFMACRO_ICON;
     }
 
     public String getDocstring() {
