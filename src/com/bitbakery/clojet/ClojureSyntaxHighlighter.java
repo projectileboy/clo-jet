@@ -19,7 +19,7 @@ import java.util.Map;
  * Defines Clojure tokens and elements which can have custom font and color to enhance readability
  */
 public class ClojureSyntaxHighlighter extends SyntaxHighlighterBase {
-    private static Map<IElementType, TextAttributesKey> keys;
+    public static Map<IElementType, TextAttributesKey> keys;
 
     static {
         keys = new HashMap<IElementType, TextAttributesKey>();
