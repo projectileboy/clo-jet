@@ -31,8 +31,9 @@ public interface ClojureElementTypes {
 
     IElementType JAVA_EXPRESSION = new ClojureElementType("(. )");
     IElementType EXPRESSION = new ClojureElementType("()");
-    IElementType VECTOR = new ClojureElementType("[]");
-    IElementType MAP = new ClojureElementType("{}");
+    IElementType CLOJURE_VECTOR = new ClojureElementType("[]");
+    IElementType CLOJURE_MAP = new ClojureElementType("{}");
+    IElementType CLOJURE_METADATA = new ClojureElementType("metadata");
 /*
     IElementType SINGLE_ARG_ANONYMOUS_FUNCTION_DEFINITION = new ArcElementType("single arg fn");
 */

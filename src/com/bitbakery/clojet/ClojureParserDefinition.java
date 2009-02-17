@@ -111,10 +111,12 @@ public class ClojureParserDefinition implements ParserDefinition {
             return new Defstruct(node);
         } else if (type == ClojureElementTypes.EXPRESSION) {
             return new Expression(node);
-        } else if (type == ClojureElementTypes.VECTOR) {
+        } else if (type == ClojureElementTypes.CLOJURE_VECTOR) {
             return new ClojureVector(node);
-        } else if (type == ClojureElementTypes.MAP) {
+        } else if (type == ClojureElementTypes.CLOJURE_MAP) {
             return new ClojureMap(node);
+        } else if (type == ClojureElementTypes.CLOJURE_METADATA) {
+            return new ClojureMetadata(node);
         } /* else if (type == ArcElementTypes.VARIABLE_ASSIGNMENT) {
             return new VariableAssignment(node);
         } else if (type == ArcElementTypes.OPTIONAL_PARAMETER) {

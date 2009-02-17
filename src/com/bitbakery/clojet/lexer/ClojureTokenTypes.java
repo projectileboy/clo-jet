@@ -70,14 +70,16 @@ public interface ClojureTokenTypes {
     IElementType QUOTE_KEYWORD = new ClojureElementType("quote");
     IElementType META_KEYWORD = new ClojureElementType("meta");
     IElementType IF = new ClojureElementType("if");
+    IElementType COND = new ClojureElementType("cond");
     IElementType LOOP = new ClojureElementType("loop");
+    IElementType RECUR = new ClojureElementType("recur");
 
 
     // Library functions and macros that can be thought of as special forms
     IElementType DO = new ClojureElementType("do");
     IElementType LET = new ClojureElementType("let");
 
-    TokenSet SPECIAL_FORMS = TokenSet.create(DEF, DEFN, DEFMACRO, FN, IF, DO, LET, LOOP);
+    TokenSet SPECIAL_FORMS = TokenSet.create(DEF, DEFN, DEFMACRO, FN, COND, IF, DO, LET, LOOP, RECUR);
 
     // Comments
     IElementType BLOCK_COMMENT = new ClojureElementType("block comment");

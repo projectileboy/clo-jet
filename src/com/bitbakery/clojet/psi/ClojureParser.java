@@ -84,7 +84,7 @@ public class ClojureParser implements PsiParser {
                 advanceAndCheck();
             }
             builder.advanceLexer();
-            done(MAP);
+            done(CLOJURE_MAP);
         }
     }
 
@@ -95,7 +95,7 @@ public class ClojureParser implements PsiParser {
                 advanceAndCheck();
             }
             builder.advanceLexer();
-            done(VECTOR);
+            done(CLOJURE_VECTOR);
         }
     }
 
@@ -196,9 +196,8 @@ public class ClojureParser implements PsiParser {
         public void parse() {
             // We are pointing at 'def'
             advanceAndCheck();
-
+            parseMetadata();
             parseVariableDefinition();
-
             while (notAt(RIGHT_PAREN)) {
                 getParser().parse();
             }
@@ -233,6 +232,20 @@ public class ClojureParser implements PsiParser {
 
     private interface Parser {
         public void parse();
+    }
+
+    private void parseMetadata() {
+        if (isAt(METADATA)) {
+            markAndAdvance();
+            if (isAt(LEFT_CURLY)) {
+                advanceAndCheck();
+            }
+            while (notAt(RIGHT_CURLY)) {
+                advanceAndCheck(); // TODO - Group key/value pairs      
+            }
+            builder.advanceLexer();
+            done(CLOJURE_METADATA);
+        }
     }
 
     private void parseVariableDefinition() {

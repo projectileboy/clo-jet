@@ -50,7 +50,6 @@ FloatLiteral=({FloatingPointLiteral1})|({FloatingPointLiteral2})|({FloatingPoint
 
 NumericLiteral=["+""-"]?({IntegerLiteral})|({FloatLiteral})
 
-/**** TODO - Do we need support for pipe-delimited symbols, like in Common Lisp??? ********************/
 /**** TODO - Is there some nice way to generalize this to other languages with non-Roman chars?? ******/
 /**** TODO - Can we intercept special characters before we intercept symbols? ******/
 Char=[A-Za-z0-9!@$%<>_/?\+\*\-=\?\;\|]
@@ -91,7 +90,9 @@ StringLiteral=\"([^\\\"]|{EscapeSequence})*(\"|\\)?
 [Mm][ee][Tt][Aa]            { return META_KEYWORD; }
 [Ff][Nn]                    { return FN; }
 [Ii][Ff]                    { return IF; }
+[Cc][Oo][Nn][Dd]            { return COND; }
 [Ll][Oo][Oo][Pp]            { return LOOP; }
+[Rr][Ee][Cc][Uu][Rr]        { return RECUR; }
 [Dd][Oo]                    { return DO; }
 [Ll][Ee][Tt]                { return LET; }
 
