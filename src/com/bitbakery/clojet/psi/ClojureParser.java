@@ -48,6 +48,9 @@ public class ClojureParser implements PsiParser {
         parsers.put(DEF, new DefParser());
         parsers.put(DEFN, new DefnParser());
         parsers.put(DEFMACRO, new DefmacroParser());
+        parsers.put(DEFMULTI, new DefmultiParser());
+        parsers.put(DEFMETHOD, new DefmethodParser());
+        parsers.put(DEFSTRUCT, new DefstructParser());
         parsers.put(FN, new FnParser());
     }
 
@@ -104,6 +107,9 @@ public class ClojureParser implements PsiParser {
             if (isAt(DEF)) type = DEFINITION;
             else if (isAt(DEFN)) type = FUNCTION_DEFINITION;
             else if (isAt(DEFMACRO)) type = MACRO_DEFINITION;
+            else if (isAt(DEFMULTI)) type = MULTIMETHOD_DEFINITION;
+            else if (isAt(DEFMETHOD)) type = METHOD_DEFINITION;
+            else if (isAt(DEFSTRUCT)) type = METHOD_DEFINITION;
             else if (isAt(FN)) type = ANONYMOUS_FUNCTION_DEFINITION;
 
             // TODO - The first element requires special handling - could be def, defn, defmacro,...
@@ -133,6 +139,48 @@ public class ClojureParser implements PsiParser {
     private class DefnParser implements Parser {
         public void parse() {
             // We are pointing at 'defn'
+            advanceAndCheck();
+
+            parseVariableDefinition();
+            parseDocstring();
+
+            while (notAt(RIGHT_PAREN)) {
+                getParser().parse(); // TODO - This will properly parse the parameters, but it won't recognize them as parameters... hmm....
+            }
+        }
+    }
+
+    private class DefmethodParser implements Parser {
+        public void parse() {
+            // We are pointing at 'defmethod'
+            advanceAndCheck();
+
+            parseVariableDefinition();
+            parseDocstring();
+
+            while (notAt(RIGHT_PAREN)) {
+                getParser().parse(); // TODO - This will properly parse the parameters, but it won't recognize them as parameters... hmm....
+            }
+        }
+    }
+
+    private class DefstructParser implements Parser {
+        public void parse() {
+            // We are pointing at 'defstruct'
+            advanceAndCheck();
+
+            parseVariableDefinition();
+            parseDocstring();
+
+            while (notAt(RIGHT_PAREN)) {
+                getParser().parse(); // TODO - This will properly parse the parameters, but it won't recognize them as parameters... hmm....
+            }
+        }
+    }
+
+    private class DefmultiParser implements Parser {
+        public void parse() {
+            // We are pointing at 'defmulti'
             advanceAndCheck();
 
             parseVariableDefinition();

@@ -1,0 +1,8 @@
+#if ( $PACKAGE_NAME != "" )(ns ${PACKAGE_NAME})
+#end
+###parse("File Header.java")
+
+(defn ${NAME}
+    "Function description"
+    [param1 param2]
+    (do something))

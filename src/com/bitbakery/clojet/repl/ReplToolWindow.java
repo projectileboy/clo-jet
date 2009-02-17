@@ -106,11 +106,13 @@ public class ReplToolWindow implements ProjectComponent {
     }
 
     public void disposeComponent() {
+/* TODO - Memory leaks galore from this guy... need to call on the EventDispatch thread; who *knows* what else I'm doing wrong?? <sigh>...
         ToolWindowManager.getInstance(myProject).unregisterToolWindow(message("repl.toolWindowName"));
         for (Repl repl : replList) {
             repl.close();
         }
         tabbedPane.removeAll();
+*/
 
         // TODO - Any other cleanup??
     }

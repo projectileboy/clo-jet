@@ -23,6 +23,13 @@ public interface ClojureElementTypes {
 
     IElementType DEFINITION = new ClojureElementType("def");
     IElementType FUNCTION_DEFINITION = new ClojureElementType("defn");
+    IElementType METHOD_DEFINITION = new ClojureElementType("defmethod");
+    IElementType MULTIMETHOD_DEFINITION = new ClojureElementType("defmulti");
+    IElementType STRUCTURE_DEFINITION = new ClojureElementType("defstruct");
+    IElementType MACRO_DEFINITION = new ClojureElementType("defmacro");
+    IElementType ANONYMOUS_FUNCTION_DEFINITION = new ClojureElementType("fn");
+
+    IElementType JAVA_EXPRESSION = new ClojureElementType("(. )");
     IElementType EXPRESSION = new ClojureElementType("()");
     IElementType VECTOR = new ClojureElementType("[]");
     IElementType MAP = new ClojureElementType("{}");
@@ -30,8 +37,6 @@ public interface ClojureElementTypes {
     IElementType SINGLE_ARG_ANONYMOUS_FUNCTION_DEFINITION = new ArcElementType("single arg fn");
 */
 
-    IElementType ANONYMOUS_FUNCTION_DEFINITION = new ClojureElementType("fn");
-    IElementType MACRO_DEFINITION = new ClojureElementType("defmacro");
 /*
     IElementType LET_BLOCK = new ArcElementType("let");
     IElementType WITH_BLOCK = new ArcElementType("with");

@@ -18,11 +18,12 @@
     <description>Provides support for Clojure, including code editing and a REPL</description>
     <version>0.1</version>
     <category>Custom Languages</category>
-    <vendor>The Bit Bakery</vendor>
+    <!--<vendor email="clojet@bitbakery.com" logo="/org/jetbrains/plugins/groovy/images/groovy_16x16.png">The Bit Bakery</vendor>-->
+    <vendor url="http://www.bitbakery.com">The Bit Bakery</vendor>
     <idea-version since-build="8000"/>
 
     <!-- TODO -->
-    <helpset></helpset>
+    <!--<helpset></helpset>-->
 
     <change-notes>
         <![CDATA[
@@ -40,9 +41,20 @@
 
     <extensions defaultExtensionNs="com.intellij">
 
-        <colorSettingsPage implementation="com.bitbakery.clojet.config.CloJetColorSettingsPage"/>
         <fileTypeFactory implementation="com.bitbakery.clojet.CloJetSupportLoader"/>
         <syntaxHighlighter key="Clojure" factoryClass="com.bitbakery.clojet.ClojureSyntaxHighlighterProvider"/>
+
+        <colorSettingsPage implementation="com.bitbakery.clojet.config.CloJetColorSettingsPage"/>
+
+
+        <!--<fileTemplateGroup implementation="com.bitbakery.clojet.templates.ClojureTemplatesFactory"/>-->
+        <!--<liveTemplateContext implementation="com.bitbakery.clojet.templates.ClojureTemplateContextType"/>-->
+
+<!--
+        <gotoClassContributor implementation="com.bitbakery.clojet.goto.ClojureGoToFunctionOrMacroContributor"/>
+        <gotoSymbolContributor implementation="com.bitbakery.clojet.goto.ClojureGoToSymbolContributor"/>
+-->
+
         <lang.braceMatcher language="Clojure" implementationClass="com.bitbakery.clojet.ClojureBraceMatcher"/>
         <lang.commenter language="Clojure" implementationClass="com.bitbakery.clojet.ClojureCommenter"/>
         <lang.documentationProvider language="Clojure" implementationClass="com.bitbakery.clojet.ClojureDocumentationProvider"/>
@@ -50,7 +62,7 @@
         <lang.languageProvider language="Clojure" implementationClass="com.bitbakery.clojet.ClojureLanguage"/>
         <lang.parserDefinition language="Clojure" implementationClass="com.bitbakery.clojet.ClojureParserDefinition"/>
         <lang.psiStructureViewFactory language="Clojure"
-                                      implementationClass="com.bitbakery.clojet.ClojureStructureViewBuilderFactory"/>
+                                      implementationClass="com.bitbakery.clojet.structure.ClojureStructureViewBuilderFactory"/>
 
 
         <applicationConfigurable implementation="com.bitbakery.clojet.config.CloJetConfigurable"/>

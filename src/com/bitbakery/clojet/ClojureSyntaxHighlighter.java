@@ -15,7 +15,6 @@ package com.bitbakery.clojet;
  */
 
 import com.bitbakery.clojet.lexer.ClojureLexer;
-import com.bitbakery.clojet.lexer.ClojureTokenTypes;
 import static com.bitbakery.clojet.lexer.ClojureTokenTypes.*;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.HighlighterColors;
@@ -38,15 +37,17 @@ public class ClojureSyntaxHighlighter extends SyntaxHighlighterBase {
     static {
         keys = new HashMap<IElementType, TextAttributesKey>();
 
-        keys.put(TILDE, createTextAttributesKey("CLOJURE.TILDE", HighlighterColors.TEXT.getDefaultAttributes()));
-        keys.put(EQ, createTextAttributesKey("CLOJURE.EQ", HighlighterColors.TEXT.getDefaultAttributes()));
+        keys.put(UNQUOTE, createTextAttributesKey("CLOJURE.UNQUOTE", HighlighterColors.TEXT.getDefaultAttributes()));
         keys.put(BACKQUOTE, createTextAttributesKey("CLOJURE.BACKQUOTE", HighlighterColors.TEXT.getDefaultAttributes()));
         keys.put(QUOTE, createTextAttributesKey("CLOJURE.QUOTE", HighlighterColors.TEXT.getDefaultAttributes()));
         keys.put(COMMA, createTextAttributesKey("CLOJURE.COMMA", HighlighterColors.TEXT.getDefaultAttributes()));
-        keys.put(COMMA_AT, createTextAttributesKey("CLOJURE.COMMA_AT", HighlighterColors.TEXT.getDefaultAttributes()));
-        keys.put(DOT, createTextAttributesKey("CLOJURE.DOT", HighlighterColors.TEXT.getDefaultAttributes()));
-        keys.put(COMPOSER, createTextAttributesKey("CLOJURE.COMPOSER", HighlighterColors.TEXT.getDefaultAttributes()));
+        keys.put(UNQUOTE_SPLICE, createTextAttributesKey("CLOJURE.UNQUOTE_SPLICE", HighlighterColors.TEXT.getDefaultAttributes()));
+        keys.put(REST, createTextAttributesKey("CLOJURE.REST", HighlighterColors.TEXT.getDefaultAttributes()));
 
+        // TODO - Color other special characters...
+
+
+        
         keys.put(TRUE, createTextAttributesKey("CLOJURE.TRUE", SyntaxHighlighterColors.NUMBER.getDefaultAttributes()));
         keys.put(NIL, createTextAttributesKey("CLOJURE.NIL", SyntaxHighlighterColors.NUMBER.getDefaultAttributes()));
 
@@ -64,11 +65,13 @@ public class ClojureSyntaxHighlighter extends SyntaxHighlighterBase {
         keys.put(IF, createTextAttributesKey("CLOJURE.IF", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));
         keys.put(DO, createTextAttributesKey("CLOJURE.DO", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));
         keys.put(LET, createTextAttributesKey("CLOJURE.LET", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));
-        keys.put(WITH, createTextAttributesKey("CLOJURE.WITH", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));
-        keys.put(DEFMACRO, createTextAttributesKey("CLOJURE.MAC", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));
-        keys.put(DEFN, createTextAttributesKey("CLOJURE.DEF", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));
+        keys.put(DEFMULTI, createTextAttributesKey("CLOJURE.DEFMULTI", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));
+        keys.put(DEFMETHOD, createTextAttributesKey("CLOJURE.METHOD", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));
+        keys.put(DEFMACRO, createTextAttributesKey("CLOJURE.DEFMACRO", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));
+        keys.put(DEFN, createTextAttributesKey("CLOJURE.DEFN", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));
         keys.put(DEF, createTextAttributesKey("CLOJURE.DEF", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));
 
+        keys.put(KEYWORD, createTextAttributesKey("CLOJURE.KEYWORD", HighlighterColors.TEXT.getDefaultAttributes()));
         keys.put(SYMBOL, createTextAttributesKey("CLOJURE.SYMBOL", HighlighterColors.TEXT.getDefaultAttributes()));
     }
 

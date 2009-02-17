@@ -14,23 +14,18 @@ package com.bitbakery.clojet.psi;
  * governing permissions and limitations under the License.
  */
 
-import com.intellij.psi.tree.IElementType;
-import com.bitbakery.clojet.ClojureFileType;
-import org.jetbrains.annotations.NonNls;
-
+import org.jetbrains.annotations.NotNull;
+import com.intellij.lang.ASTNode;
 
 /**
- * Simple wrapper for IElementType which enables Clojure PSI elements to own theirown parsing
+ * Created by IntelliJ IDEA.
+ * User: kurtc
+ * Date: Feb 9, 2009
+ * Time: 2:45:05 PM
+ * To change this template use File | Settings | File Templates.
  */
-public class ClojureElementType extends IElementType {
-    public ClojureElementType(@NonNls String debugName) {
-        super(debugName, ClojureFileType.CLOJURE);
-    }
-
-    @SuppressWarnings({"HardCodedStringLiteral"})
-    public String toString() {
-        return "Clojure:" + super.toString();
+public class JavaExpression extends Expression {
+    public JavaExpression(@NotNull final ASTNode node) {
+        super(node);
     }
 }
-
-

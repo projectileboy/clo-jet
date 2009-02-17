@@ -66,11 +66,9 @@ public class ClojureParserDefinition implements ParserDefinition {
     public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode left, ASTNode right) {
         // TODO - Is this right? Are there spacing requirements in Lisp/Scheme/Arc that I'm not aware of?
         if (left.getElementType() == ClojureTokenTypes.COMMA
-                || left.getElementType() == ClojureTokenTypes.COMMA_AT
+                || left.getElementType() == ClojureTokenTypes.UNQUOTE_SPLICE
                 || left.getElementType() == ClojureTokenTypes.QUOTE
-                || left.getElementType() == ClojureTokenTypes.BACKQUOTE
-                || left.getElementType() == ClojureTokenTypes.COMPOSER
-                || right.getElementType() == ClojureTokenTypes.COMPOSER) {
+                || left.getElementType() == ClojureTokenTypes.BACKQUOTE) {
 
             return SpaceRequirements.MUST_NOT;
 
@@ -105,6 +103,12 @@ public class ClojureParserDefinition implements ParserDefinition {
             return new Def(node);
         } else if (type == ClojureElementTypes.MACRO_DEFINITION) {
             return new Defmacro(node);
+        } else if (type == ClojureElementTypes.MULTIMETHOD_DEFINITION) {
+            return new Defmulti(node);
+        } else if (type == ClojureElementTypes.METHOD_DEFINITION) {
+            return new Defmethod(node);
+        } else if (type == ClojureElementTypes.STRUCTURE_DEFINITION) {
+            return new Defstruct(node);
         } else if (type == ClojureElementTypes.EXPRESSION) {
             return new Expression(node);
         } else if (type == ClojureElementTypes.VECTOR) {

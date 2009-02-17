@@ -1,4 +1,4 @@
-package com.bitbakery.clojet;
+package com.bitbakery.clojet.structure;
 
 /*
  * Copyright (c) Kurt Christensen, 2009
@@ -22,12 +22,8 @@ import com.intellij.ide.structureView.TextEditorBasedStructureViewModel;
 import com.intellij.ide.util.treeView.smartTree.Filter;
 import com.intellij.ide.util.treeView.smartTree.Grouper;
 import com.intellij.ide.util.treeView.smartTree.Sorter;
-import com.intellij.ide.util.treeView.smartTree.ActionPresentation;
-import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
 
 /**
  * Created by IntelliJ IDEA.

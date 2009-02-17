@@ -53,15 +53,14 @@ NumericLiteral=["+""-"]?({IntegerLiteral})|({FloatLiteral})
 /**** TODO - Do we need support for pipe-delimited symbols, like in Common Lisp??? ********************/
 /**** TODO - Is there some nice way to generalize this to other languages with non-Roman chars?? ******/
 /**** TODO - Can we intercept special characters before we intercept symbols? ******/
-Char=[A-Za-z0-9!@#$%<>_/?&\^\+\*\-=\.\?\;\|]
-CharLiteral=#\\(newline|space|tab|return|\"|{Char})
+Char=[A-Za-z0-9!@$%<>_/?\+\*\-=\?\;\|]
+CharLiteral=\\(newline|space|tab|return|\"|{Char})
 
+Keyword= :{Char}*
 Symbol={Char}*
 
 EscapeSequence=\\[^\r\n]
 StringLiteral=\"([^\\\"]|{EscapeSequence})*(\"|\\)?
-
-/**** TODO - Include character literals ******************************/
 
 %%
 
@@ -88,37 +87,46 @@ StringLiteral=\"([^\\\"]|{EscapeSequence})*(\"|\\)?
 /** " %[0-9]* "             { return ANONYMOUS_PARAM; }  *****/
 
 
-[Nn][Ii][Ll]    { return NIL; }
-
 [Qq][Uu][Oo][Tt][Ee]        { return QUOTE_KEYWORD; }
+[Mm][ee][Tt][Aa]            { return META_KEYWORD; }
 [Ff][Nn]                    { return FN; }
 [Ii][Ff]                    { return IF; }
+[Ll][Oo][Oo][Pp]            { return LOOP; }
 [Dd][Oo]                    { return DO; }
 [Ll][Ee][Tt]                { return LET; }
-[Ww][Ii][Tt][Hh]            { return WITH; }
 
-"~"     { return TILDE; }
-"="     { return EQ; }
+[Tt][Rr][Uu][Ee]        { return TRUE; }
+[Ff][Aa][Ll][Ss][Ee]    { return FALSE; }
+[Nn][Ii][Ll]            { return NIL; }
+
+
+"~@"    { return UNQUOTE_SPLICE; }
+"~"     { return UNQUOTE; }
+"@"     { return DEREF; }
+"#^"    { return METADATA; }
+"#'"    { return VAR_QUOTE; }
+"^"     { return META; }
+"#"     { return REGEX; }
 "`"     { return BACKQUOTE; }
 "'"     { return QUOTE; }
-",@"    { return COMMA_AT; }
 ","     { return COMMA; }
+"&"     { return REST; }
 "."     { return DOT; }
-":"     { return COMPOSER; }
 
-[Dd][Ee][Ff][Nn]                    { return DEFN; }
-[Dd][Ee][Ff][Mm][Aa][Cc][Rr][Oo]    { return DEFMACRO; }
-[Dd][Ee][Ff]                        { return DEF; }
+[Dd][Ee][Ff][Nn]                     { return DEFN; }
+[Dd][Ee][Ff][Mm][Uu][Ll][Tt][Ii]     { return DEFMULTI; }
+[Dd][Ee][Ff][Mm][Ee][Tt][Hh][Oo][Dd] { return DEFMETHOD; }
+[Dd][Ee][Ff][Ss][Tt][Rr][Uu][Cc][Tt] { return DEFSTRUCT; }
+[Dd][Ee][Ff][Mm][Aa][Cc][Rr][Oo]     { return DEFMACRO; }
+[Dd][Ee][Ff]                         { return DEF; }
 
-[Tt]            { return TRUE; }
 
 
 /** TODO - In general, I think we'll want tokens for anything for which we'd like parsing - if statements, etc.)  ***/
 
 /** TODO - In here is where we'd insert core stuff from ac.scm, as.scm, and arc.arc *************************/
 
-/** TODO - In here is where we *might* choose to insert library stuff, although I don't know if that's *quite* to the "token" level... dunno, maybe iterators, at least **********/
-
+{Keyword}        { return KEYWORD; }
 {Symbol}        { return SYMBOL; }
 
 .               { return BAD_CHARACTER; }

@@ -1,4 +1,8 @@
-package com.bitbakery.clojet.psi;
+package com.bitbakery.clojet.templates;
+
+import com.bitbakery.clojet.ClojureFileType;
+import com.bitbakery.clojet.CloJetSupportLoader;
+import com.intellij.codeInsight.template.FileTypeBasedContextType;
 
 /*
  * Copyright (c) Kurt Christensen, 2009
@@ -14,23 +18,14 @@ package com.bitbakery.clojet.psi;
  * governing permissions and limitations under the License.
  */
 
-import com.intellij.psi.tree.IElementType;
-import com.bitbakery.clojet.ClojureFileType;
-import org.jetbrains.annotations.NonNls;
-
-
 /**
- * Simple wrapper for IElementType which enables Clojure PSI elements to own theirown parsing
+ * ????
  */
-public class ClojureElementType extends IElementType {
-    public ClojureElementType(@NonNls String debugName) {
-        super(debugName, ClojureFileType.CLOJURE);
+public class ClojureTemplateContextType extends FileTypeBasedContextType {
+
+    public ClojureTemplateContextType() {
+        super("CLOJURE", "Clojure", CloJetSupportLoader.CLOJURE);
     }
 
-    @SuppressWarnings({"HardCodedStringLiteral"})
-    public String toString() {
-        return "Clojure:" + super.toString();
-    }
 }
-
 

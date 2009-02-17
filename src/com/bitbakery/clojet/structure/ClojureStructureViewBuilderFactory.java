@@ -1,4 +1,4 @@
-package com.bitbakery.clojet;
+package com.bitbakery.clojet.structure;
 
 /*
  * Copyright (c) Kurt Christensen, 2009

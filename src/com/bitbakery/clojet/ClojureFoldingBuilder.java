@@ -19,8 +19,7 @@ import com.intellij.lang.folding.FoldingDescriptor;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.Document;
 import com.intellij.psi.PsiElement;
-import com.bitbakery.clojet.psi.Defn;
-import com.bitbakery.clojet.psi.Defmacro;
+import com.bitbakery.clojet.psi.*;
 import static com.bitbakery.clojet.psi.ClojureElementTypes.*;
 
 import java.util.List;
@@ -38,7 +37,18 @@ public class ClojureFoldingBuilder implements FoldingBuilder {
         } else if (node.getElementType() == MACRO_DEFINITION) {
             Defmacro mac = (Defmacro) node.getPsi();
             return "(defmacro " + mac.getName() + " ...)";
-        } /*else if (node.getElementType() == SINGLE_ARG_ANONYMOUS_FUNCTION_DEFINITION) {
+        } else if (node.getElementType() == MULTIMETHOD_DEFINITION) {
+            Defmulti multi = (Defmulti) node.getPsi();
+            return "(defmulti " + multi.getName() + " ...)";
+        } else if (node.getElementType() == METHOD_DEFINITION) {
+            Defmethod method = (Defmethod) node.getPsi();
+            return "(defmethod " + method.getName() + " ...)";
+        } else if (node.getElementType() == STRUCTURE_DEFINITION) {
+            Defstruct struct = (Defstruct) node.getPsi();
+            return "(defstruct " + struct.getName() + " ...)";
+        }
+
+        /*else if (node.getElementType() == SINGLE_ARG_ANONYMOUS_FUNCTION_DEFINITION) {
             return "[...]";
         } */else if (node.getElementType() == ANONYMOUS_FUNCTION_DEFINITION) {
             return "(fn ...)";
@@ -85,6 +95,8 @@ public class ClojureFoldingBuilder implements FoldingBuilder {
     private boolean isFoldableNode(ASTNode node) {
         return (node.getElementType() == FUNCTION_DEFINITION)
                 || (node.getElementType() == MACRO_DEFINITION)
+                || (node.getElementType() == MULTIMETHOD_DEFINITION)
+                || (node.getElementType() == METHOD_DEFINITION)
                 || (node.getElementType() == ANONYMOUS_FUNCTION_DEFINITION);
 //                || (node.getElementType() == SINGLE_ARG_ANONYMOUS_FUNCTION_DEFINITION)
 //                || (node.getElementType() == BLOCK_COMMENT);

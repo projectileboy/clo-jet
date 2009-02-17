@@ -38,18 +38,22 @@ public interface ClojureTokenTypes {
 
     IElementType LEFT_SQUARE = new ClojureElementType("[");
     IElementType RIGHT_SQUARE = new ClojureElementType("]");
-    IElementType TILDE = new ClojureElementType("~");
 
-    IElementType COMPOSER = new ClojureElementType(":");
+    IElementType UNQUOTE = new ClojureElementType("~");
+    IElementType DEREF = new ClojureElementType("@");
     IElementType DOT = new ClojureElementType(".");
-    IElementType EQ = new ClojureElementType("=");
+    IElementType REST = new ClojureElementType("&");
     IElementType BACKQUOTE = new ClojureElementType("`");
-
     IElementType QUOTE = new ClojureElementType("'");
     IElementType COMMA = new ClojureElementType(",");
-    IElementType COMMA_AT = new ClojureElementType(",@");
-    TokenSet SPECIAL_CHARACTERS = TokenSet.create(TILDE, COMPOSER, DOT, EQ, BACKQUOTE, QUOTE, COMMA, COMMA_AT);
+    IElementType METADATA = new ClojureElementType("#^");
+    IElementType META = new ClojureElementType("^");
+    IElementType REGEX = new ClojureElementType("#");
+    IElementType VAR_QUOTE = new ClojureElementType("#'");
+    IElementType UNQUOTE_SPLICE = new ClojureElementType(",@");
+    TokenSet SPECIAL_CHARACTERS = TokenSet.create(UNQUOTE, DEREF, METADATA, META, REGEX, REST, VAR_QUOTE, DOT, BACKQUOTE, QUOTE, COMMA, UNQUOTE_SPLICE);
 
+    
     // This guy is a little special, at least within single-var anonymous fn definitions
     IElementType ANONYMOUS_PARAM = new ClojureElementType("%");
 
@@ -58,19 +62,22 @@ public interface ClojureTokenTypes {
     IElementType DEF = new ClojureElementType("def");
     IElementType DEFN = new ClojureElementType("defn");
     IElementType DEFMACRO = new ClojureElementType("defmacro");
-
+    IElementType DEFMETHOD = new ClojureElementType("defmethod");
+    IElementType DEFMULTI = new ClojureElementType("defmulti");
+    IElementType DEFSTRUCT = new ClojureElementType("defstruct");
+    IElementType FN = new ClojureElementType("fn");
 
     IElementType QUOTE_KEYWORD = new ClojureElementType("quote");
-    IElementType FN = new ClojureElementType("fn");
+    IElementType META_KEYWORD = new ClojureElementType("meta");
     IElementType IF = new ClojureElementType("if");
+    IElementType LOOP = new ClojureElementType("loop");
 
 
-    // Library stuff from arc.arc
+    // Library functions and macros that can be thought of as special forms
     IElementType DO = new ClojureElementType("do");
     IElementType LET = new ClojureElementType("let");
-    IElementType WITH = new ClojureElementType("with");
 
-    TokenSet KEYWORDS = TokenSet.create(DEF, DEFN, DEFMACRO, FN, IF, DO, LET, WITH);
+    TokenSet SPECIAL_FORMS = TokenSet.create(DEF, DEFN, DEFMACRO, FN, IF, DO, LET, LOOP);
 
     // Comments
     IElementType BLOCK_COMMENT = new ClojureElementType("block comment");
@@ -83,14 +90,16 @@ public interface ClojureTokenTypes {
     IElementType NUMERIC_LITERAL = new ClojureElementType("numeric literal");
     IElementType CHAR_LITERAL = new ClojureElementType("character literal");
 
-    IElementType TRUE = new ClojureElementType("t");
+    IElementType TRUE = new ClojureElementType("true");
+    IElementType FALSE = new ClojureElementType("false");
     IElementType NIL = new ClojureElementType("nil");
-    TokenSet BOOLEAN_LITERAL = TokenSet.create(TRUE, NIL);
+    TokenSet BOOLEAN_LITERAL = TokenSet.create(TRUE, FALSE, NIL);
 
     TokenSet LITERALS = TokenSet.create(STRING_LITERAL, NUMERIC_LITERAL, CHAR_LITERAL, TRUE, NIL);
     TokenSet READABLE_TEXT = TokenSet.create(STRING_LITERAL, BLOCK_COMMENT, LINE_COMMENT);
 
 
+    IElementType KEYWORD = new ClojureElementType("keyword");
     IElementType SYMBOL = new ClojureElementType("symbol");
     TokenSet SYMBOL_FILTER = TokenSet.create(SYMBOL);
 
@@ -102,7 +111,6 @@ public interface ClojureTokenTypes {
     IElementType BAD_CHARACTER = TokenType.BAD_CHARACTER;
 
     TokenSet WHITESPACE_SET = TokenSet.create(EOL, EOF, WHITESPACE);
-    // TODO - Not tokens, but we should know what library functions are available depending on the CL implementation we're using??
     // TODO - We should understand the syntax of common macros, like do, print format synatx, etc.
     // TODO - Should we distinguish between macros and functions that are destructive?
 }
