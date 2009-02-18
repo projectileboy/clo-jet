@@ -51,21 +51,16 @@ public interface ClojureTokenTypes {
     IElementType REGEX = new ClojureElementType("#");
     IElementType VAR_QUOTE = new ClojureElementType("#'");
     IElementType UNQUOTE_SPLICE = new ClojureElementType(",@");
-    TokenSet SPECIAL_CHARACTERS = TokenSet.create(UNQUOTE, DEREF, METADATA, META, REGEX, REST, VAR_QUOTE, DOT, BACKQUOTE, QUOTE, COMMA, UNQUOTE_SPLICE);
 
-    
     // This guy is a little special, at least within single-var anonymous fn definitions
     IElementType ANONYMOUS_PARAM = new ClojureElementType("%");
 
+    TokenSet SPECIAL_CHARACTERS = TokenSet.create(UNQUOTE, DEREF, METADATA, META,
+            REGEX, REST, VAR_QUOTE, DOT, BACKQUOTE, QUOTE, COMMA, UNQUOTE_SPLICE);
 
-    // Keywords and special forms
+
+    // Keywords and special forms (as well as some keywords that behave like
     IElementType DEF = new ClojureElementType("def");
-    IElementType DEFN = new ClojureElementType("defn");
-    IElementType DEFMACRO = new ClojureElementType("defmacro");
-    IElementType DEFMETHOD = new ClojureElementType("defmethod");
-    IElementType DEFMULTI = new ClojureElementType("defmulti");
-    IElementType DEFSTRUCT = new ClojureElementType("defstruct");
-    IElementType FN = new ClojureElementType("fn");
 
     IElementType QUOTE_KEYWORD = new ClojureElementType("quote");
     IElementType META_KEYWORD = new ClojureElementType("meta");
@@ -73,13 +68,27 @@ public interface ClojureTokenTypes {
     IElementType COND = new ClojureElementType("cond");
     IElementType LOOP = new ClojureElementType("loop");
     IElementType RECUR = new ClojureElementType("recur");
+    IElementType VAR = new ClojureElementType("var");
+    IElementType THROW = new ClojureElementType("throw");
+    IElementType TRY = new ClojureElementType("try");
+    IElementType NEW = new ClojureElementType("new");
+    IElementType SET = new ClojureElementType("set!");
+    IElementType MONITOR_ENTER = new ClojureElementType("monitor-enter");
+    IElementType MONITOR_EXIT = new ClojureElementType("monitor-exit");
 
-
-    // Library functions and macros that can be thought of as special forms
     IElementType DO = new ClojureElementType("do");
     IElementType LET = new ClojureElementType("let");
 
-    TokenSet SPECIAL_FORMS = TokenSet.create(DEF, DEFN, DEFMACRO, FN, COND, IF, DO, LET, LOOP, RECUR);
+    TokenSet SPECIAL_FORMS = TokenSet.create(DEF, COND, IF, DO, LET, LOOP, RECUR, VAR, THROW, TRY, NEW, SET);
+
+    IElementType DEFN = new ClojureElementType("defn");
+    IElementType DEFMACRO = new ClojureElementType("defmacro");
+    IElementType DEFMETHOD = new ClojureElementType("defmethod");
+    IElementType DEFMULTI = new ClojureElementType("defmulti");
+    IElementType DEFSTRUCT = new ClojureElementType("defstruct");
+    IElementType FN = new ClojureElementType("fn");
+
+    TokenSet PSEUDO_SPECIAL_FORMS = TokenSet.create(DEF, DEFN, DEFMACRO, DEFMULTI, DEFMETHOD, DEFSTRUCT, FN);
 
     // Comments
     IElementType BLOCK_COMMENT = new ClojureElementType("block comment");

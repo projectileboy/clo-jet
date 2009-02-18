@@ -31,7 +31,10 @@ import java.util.ArrayList;
 public class ClojureFoldingBuilder implements FoldingBuilder {
 
     public String getPlaceholderText(ASTNode node) {
-        if (node.getElementType() == FUNCTION_DEFINITION) {
+        if (node.getElementType() == DEFINITION) {
+            Def def = (Def) node.getPsi();
+            return "(def " + def.getName() + " ...)";
+        } else if (node.getElementType() == FUNCTION_DEFINITION) {
             Defn def = (Defn) node.getPsi();
             return "(defn " + def.getName() + " ...)";
         } else if (node.getElementType() == MACRO_DEFINITION) {
@@ -94,6 +97,7 @@ public class ClojureFoldingBuilder implements FoldingBuilder {
 
     private boolean isFoldableNode(ASTNode node) {
         return (node.getElementType() == FUNCTION_DEFINITION)
+                || (node.getElementType() == DEFINITION)
                 || (node.getElementType() == MACRO_DEFINITION)
                 || (node.getElementType() == MULTIMETHOD_DEFINITION)
                 || (node.getElementType() == METHOD_DEFINITION)

@@ -38,17 +38,24 @@ public class ClojureSyntaxHighlighter extends SyntaxHighlighterBase {
         keys = new HashMap<IElementType, TextAttributesKey>();
 
         keys.put(UNQUOTE, createTextAttributesKey("CLOJURE.UNQUOTE", HighlighterColors.TEXT.getDefaultAttributes()));
+        keys.put(DEREF, createTextAttributesKey("CLOJURE.DEREF", HighlighterColors.TEXT.getDefaultAttributes()));
+
+        keys.put(REST, createTextAttributesKey("CLOJURE.REST", HighlighterColors.TEXT.getDefaultAttributes()));
         keys.put(BACKQUOTE, createTextAttributesKey("CLOJURE.BACKQUOTE", HighlighterColors.TEXT.getDefaultAttributes()));
         keys.put(QUOTE, createTextAttributesKey("CLOJURE.QUOTE", HighlighterColors.TEXT.getDefaultAttributes()));
         keys.put(COMMA, createTextAttributesKey("CLOJURE.COMMA", HighlighterColors.TEXT.getDefaultAttributes()));
+        keys.put(METADATA, createTextAttributesKey("CLOJURE.METADATA", HighlighterColors.TEXT.getDefaultAttributes()));
+        keys.put(META, createTextAttributesKey("CLOJURE.META", HighlighterColors.TEXT.getDefaultAttributes()));
+
+        keys.put(VAR_QUOTE, createTextAttributesKey("CLOJURE.VAR.QUOTE", HighlighterColors.TEXT.getDefaultAttributes()));
         keys.put(UNQUOTE_SPLICE, createTextAttributesKey("CLOJURE.UNQUOTE_SPLICE", HighlighterColors.TEXT.getDefaultAttributes()));
-        keys.put(REST, createTextAttributesKey("CLOJURE.REST", HighlighterColors.TEXT.getDefaultAttributes()));
 
         // TODO - Color other special characters...
 
 
         
         keys.put(TRUE, createTextAttributesKey("CLOJURE.TRUE", SyntaxHighlighterColors.NUMBER.getDefaultAttributes()));
+        keys.put(FALSE, createTextAttributesKey("CLOJURE.FALSE", SyntaxHighlighterColors.NUMBER.getDefaultAttributes()));
         keys.put(NIL, createTextAttributesKey("CLOJURE.NIL", SyntaxHighlighterColors.NUMBER.getDefaultAttributes()));
 
         keys.put(NUMERIC_LITERAL, createTextAttributesKey("CLOJURE.NUMERIC_LITERAL", SyntaxHighlighterColors.NUMBER.getDefaultAttributes()));
@@ -58,13 +65,24 @@ public class ClojureSyntaxHighlighter extends SyntaxHighlighterBase {
         keys.put(LINE_COMMENT, createTextAttributesKey("CLOJURE.LINE_COMMENT", SyntaxHighlighterColors.LINE_COMMENT.getDefaultAttributes()));
 
         // TODO - How can we color docstrings? 
-        keys.put(DO, createTextAttributesKey("CLOJURE.LINE_COMMENT", SyntaxHighlighterColors.LINE_COMMENT.getDefaultAttributes()));
-
         keys.put(QUOTE_KEYWORD, createTextAttributesKey("CLOJURE.QUOTE_KEYWORD", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));
-        keys.put(FN, createTextAttributesKey("CLOJURE.FN", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));
+        keys.put(META_KEYWORD, createTextAttributesKey("CLOJURE.META_KEYWORD", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));
         keys.put(IF, createTextAttributesKey("CLOJURE.IF", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));
+        keys.put(COND, createTextAttributesKey("CLOJURE.COND", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));
+        keys.put(LOOP, createTextAttributesKey("CLOJURE.DO", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));
+        keys.put(RECUR, createTextAttributesKey("CLOJURE.RECUR", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));
+        keys.put(VAR, createTextAttributesKey("CLOJURE.VAR", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));
+        keys.put(THROW, createTextAttributesKey("CLOJURE.THROW", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));
+        keys.put(TRY, createTextAttributesKey("CLOJURE.TRY", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));
+        keys.put(NEW, createTextAttributesKey("CLOJURE.NEW", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));
+        keys.put(SET, createTextAttributesKey("CLOJURE.SET", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));
+        keys.put(MONITOR_ENTER, createTextAttributesKey("CLOJURE.MONITOR.ENTER", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));
+        keys.put(MONITOR_EXIT, createTextAttributesKey("CLOJURE.MONITOR.EXIT", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));
+
+        keys.put(FN, createTextAttributesKey("CLOJURE.FN", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));
         keys.put(DO, createTextAttributesKey("CLOJURE.DO", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));
         keys.put(LET, createTextAttributesKey("CLOJURE.LET", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));
+        keys.put(DEFSTRUCT, createTextAttributesKey("CLOJURE.DEFSTRUCT", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));
         keys.put(DEFMULTI, createTextAttributesKey("CLOJURE.DEFMULTI", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));
         keys.put(DEFMETHOD, createTextAttributesKey("CLOJURE.METHOD", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));
         keys.put(DEFMACRO, createTextAttributesKey("CLOJURE.DEFMACRO", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()));

@@ -34,23 +34,20 @@ public interface ClojureElementTypes {
     IElementType CLOJURE_VECTOR = new ClojureElementType("[]");
     IElementType CLOJURE_MAP = new ClojureElementType("{}");
     IElementType CLOJURE_METADATA = new ClojureElementType("metadata");
+    IElementType LET_BINDINGS = new ClojureElementType("let bindings");
 /*
     IElementType SINGLE_ARG_ANONYMOUS_FUNCTION_DEFINITION = new ArcElementType("single arg fn");
 */
 
-/*
-    IElementType LET_BLOCK = new ArcElementType("let");
-    IElementType WITH_BLOCK = new ArcElementType("with");
-*/
+    IElementType LET_BLOCK = new ClojureElementType("let");
     IElementType DOCSTRING = new ClojureElementType("docstring");
 /*
     IElementType QUOTED_EXPRESSION = new ArcElementType("quoted expression");
     IElementType BACKQUOTED_EXPRESSION = new ArcElementType("backquoted expression");
     IElementType COMMA_EXPRESSION = new ArcElementType("comma expression");
     IElementType COMMA_AT_EXPRESSION = new ArcElementType("comma-at expression");
-
-    IElementType VARIABLE_ASSIGNMENT = new ArcElementType("variable assignment");
 */
+    IElementType VARIABLE_REFERENCE = new ClojureElementType("variable reference");
     IElementType VARIABLE_DEFINITION = new ClojureElementType("variable definition");
 /*
     IElementType PARAMETER = new ArcElementType("parameter");

@@ -16,28 +16,16 @@ package com.bitbakery.clojet.psi;
 
 import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.tree.TokenSet;
-import com.bitbakery.clojet.CloJetIcons;
-
-import javax.swing.*;
 
 /**
- * PSI elemenet representing a named variable definition ("def") in Clojure.
+ * Created by IntelliJ IDEA.
+ * User: kurtc
+ * Date: Feb 9, 2009
+ * Time: 2:45:05 PM
+ * To change this template use File | Settings | File Templates.
  */
-public class Def extends VariableAssignment {
-    public Def(@NotNull final ASTNode node) {
+public class Let extends ClojureElement {
+    public Let(@NotNull final ASTNode node) {
         super(node);
-    }
-
-    public Icon getIcon(int flags) {
-        return CloJetIcons.CLOJURE_DEF_ICON;
-    }
-
-    public String getDocstring() {
-        ASTNode[] children = getNode().getChildren(TokenSet.create(ClojureElementTypes.DOCSTRING));
-        if (children != null && children.length > 0) {
-            return stripQuotes(children[0].getText());
-        }
-        return null;
     }
 }

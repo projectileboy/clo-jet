@@ -33,6 +33,7 @@ public class ClojureParser implements PsiParser {
 
     private Stack<PsiBuilder.Marker> markers;
     private Map<IElementType, Parser> parsers;
+    private Map<IElementType, IElementType> types;
     private PsiBuilder builder;
     private DefaultParser defaultParser;
 
@@ -52,6 +53,17 @@ public class ClojureParser implements PsiParser {
         parsers.put(DEFMETHOD, new DefmethodParser());
         parsers.put(DEFSTRUCT, new DefstructParser());
         parsers.put(FN, new FnParser());
+      //  parsers.put(LET, new LetParser());
+
+        types = new HashMap<IElementType, IElementType>();
+        types.put(DEF, DEFINITION);
+        types.put(DEFN, FUNCTION_DEFINITION);
+        types.put(DEFMACRO, MACRO_DEFINITION);
+        types.put(DEFMULTI, MULTIMETHOD_DEFINITION);
+        types.put(DEFMETHOD, METHOD_DEFINITION);
+        types.put(DEFSTRUCT, STRUCTURE_DEFINITION);
+        types.put(FN, ANONYMOUS_FUNCTION_DEFINITION);
+     //   types.put(LET, LET_BLOCK);
     }
 
     @NotNull
@@ -101,24 +113,16 @@ public class ClojureParser implements PsiParser {
 
     private class ParenParser implements Parser {
         public void parse() {
+            // We are pointing at a left paren
             markAndAdvance();
 
-            IElementType type = EXPRESSION;
-            if (isAt(DEF)) type = DEFINITION;
-            else if (isAt(DEFN)) type = FUNCTION_DEFINITION;
-            else if (isAt(DEFMACRO)) type = MACRO_DEFINITION;
-            else if (isAt(DEFMULTI)) type = MULTIMETHOD_DEFINITION;
-            else if (isAt(DEFMETHOD)) type = METHOD_DEFINITION;
-            else if (isAt(DEFSTRUCT)) type = METHOD_DEFINITION;
-            else if (isAt(FN)) type = ANONYMOUS_FUNCTION_DEFINITION;
+            IElementType type = getExpressionType();
 
-            // TODO - The first element requires special handling - could be def, defn, defmacro,...
-            while (notAt(RIGHT_PAREN)) {
-                getParser().parse();
-            }
+            parseBody(RIGHT_PAREN);
             builder.advanceLexer();
             done(type);
         }
+
     }
 
     private class DefmacroParser implements Parser {
@@ -128,11 +132,7 @@ public class ClojureParser implements PsiParser {
 
             parseVariableDefinition();
             parseDocstring();
-
-            while (notAt(RIGHT_PAREN)) {
-                getParser().parse(); // TODO - This will properly parse the parameters, but it won't recognize them as parameters... hmm....
-                // TODO - We don't handle macro-y things at all (backquoted statements, etc.)
-            }
+            parseBody(RIGHT_PAREN); // TODO - This will properly parse the parameters, but it won't recognize them as parameters... hmm....
         }
     }
 
@@ -143,10 +143,7 @@ public class ClojureParser implements PsiParser {
 
             parseVariableDefinition();
             parseDocstring();
-
-            while (notAt(RIGHT_PAREN)) {
-                getParser().parse(); // TODO - This will properly parse the parameters, but it won't recognize them as parameters... hmm....
-            }
+            parseBody(RIGHT_PAREN); // TODO - This will properly parse the parameters, but it won't recognize them as parameters... hmm....
         }
     }
 
@@ -157,10 +154,7 @@ public class ClojureParser implements PsiParser {
 
             parseVariableDefinition();
             parseDocstring();
-
-            while (notAt(RIGHT_PAREN)) {
-                getParser().parse(); // TODO - This will properly parse the parameters, but it won't recognize them as parameters... hmm....
-            }
+            parseBody(RIGHT_PAREN); // TODO - This will properly parse the parameters, but it won't recognize them as parameters... hmm....
         }
     }
 
@@ -171,10 +165,7 @@ public class ClojureParser implements PsiParser {
 
             parseVariableDefinition();
             parseDocstring();
-
-            while (notAt(RIGHT_PAREN)) {
-                getParser().parse(); // TODO - This will properly parse the parameters, but it won't recognize them as parameters... hmm....
-            }
+            parseBody(RIGHT_PAREN); // TODO - This will properly parse the parameters, but it won't recognize them as parameters... hmm....
         }
     }
 
@@ -185,10 +176,7 @@ public class ClojureParser implements PsiParser {
 
             parseVariableDefinition();
             parseDocstring();
-
-            while (notAt(RIGHT_PAREN)) {
-                getParser().parse(); // TODO - This will properly parse the parameters, but it won't recognize them as parameters... hmm....
-            }
+            parseBody(RIGHT_PAREN); // TODO - This will properly parse the parameters, but it won't recognize them as parameters... hmm....
         }
     }
 
@@ -198,9 +186,7 @@ public class ClojureParser implements PsiParser {
             advanceAndCheck();
             parseMetadata();
             parseVariableDefinition();
-            while (notAt(RIGHT_PAREN)) {
-                getParser().parse();
-            }
+            parseBody(RIGHT_PAREN);
         }
     }
 
@@ -209,9 +195,16 @@ public class ClojureParser implements PsiParser {
             // We are pointing at 'fn'
             advanceAndCheck();
 
-            while (notAt(RIGHT_PAREN)) {
-                getParser().parse(); // TODO - This will properly parse the parameters, but it won't recognize them as parameters... hmm....
-            }
+            parseBody(RIGHT_PAREN); // TODO - This will properly parse the parameters, but it won't recognize them as parameters... hmm....
+        }
+    }
+
+    private class LetParser implements Parser {
+        public void parse() {
+            // We are pointing at 'let'
+            advanceAndCheck();
+            parseBindings();
+            parseBody(RIGHT_PAREN);
         }
     }
 
@@ -222,7 +215,11 @@ public class ClojureParser implements PsiParser {
 
     private class DefaultParser implements Parser {
         public void parse() {
-            advanceAndCheck();
+            if (isAt(SYMBOL)) {
+                markAndAdvance(VARIABLE_REFERENCE);
+            } else {
+                advanceAndCheck();
+            }
         }
     }
 
@@ -232,6 +229,32 @@ public class ClojureParser implements PsiParser {
 
     private interface Parser {
         public void parse();
+    }
+
+
+    
+    private IElementType getExpressionType() {
+        IElementType type = types.get(builder.getTokenType());
+        return type != null ? type : EXPRESSION;
+    }
+
+    private void parseBody(IElementType terminator) {
+        while (notAt(terminator)) {
+            getParser().parse();
+        }
+    }
+
+    private void parseBindings() {
+        if (isAt(LEFT_SQUARE)) {
+
+            // TODO - Identify var/value pairs; also handle destructuring binds 
+            while (notAt(RIGHT_SQUARE)) {
+                getParser().parse();
+            }
+
+            builder.advanceLexer();
+            done(LET_BINDINGS);
+        }
     }
 
     private void parseMetadata() {

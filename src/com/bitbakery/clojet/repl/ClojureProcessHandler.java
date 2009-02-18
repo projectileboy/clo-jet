@@ -14,7 +14,6 @@ package com.bitbakery.clojet.repl;
  * governing permissions and limitations under the License.
  */
 
-import com.bitbakery.clojet.CloJetStrings;
 import com.bitbakery.clojet.config.CloJetSettings;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
@@ -23,13 +22,11 @@ import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.encoding.EncodingManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.util.Alarm;
 
-import javax.swing.*;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.concurrent.*;

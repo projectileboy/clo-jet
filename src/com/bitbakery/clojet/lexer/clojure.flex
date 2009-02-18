@@ -95,6 +95,15 @@ StringLiteral=\"([^\\\"]|{EscapeSequence})*(\"|\\)?
 [Rr][Ee][Cc][Uu][Rr]        { return RECUR; }
 [Dd][Oo]                    { return DO; }
 [Ll][Ee][Tt]                { return LET; }
+[Vv][Aa][Rr]                { return VAR; }
+[Tt][Hh][Rr][Oo][Ww]        { return THROW; }
+[Tt][Rr][Yy]                { return TRY; }
+[Nn][Ee][Ww]                { return NEW; }
+[Ss][Ee][Tt]\!              { return SET; }
+
+[Mm][Oo][Nn][Ii][Tt][Oo][Rr]-[Ee][Nn][Tt][Ee][Rr]  { return MONITOR_ENTER; }
+[Mm][Oo][Nn][Ii][Tt][Oo][Rr]-[Ee][Xx][Ii][Tt]      { return MONITOR_EXIT; }
+
 
 [Tt][Rr][Uu][Ee]        { return TRUE; }
 [Ff][Aa][Ll][Ss][Ee]    { return FALSE; }
@@ -127,7 +136,7 @@ StringLiteral=\"([^\\\"]|{EscapeSequence})*(\"|\\)?
 
 /** TODO - In here is where we'd insert core stuff from ac.scm, as.scm, and arc.arc *************************/
 
-{Keyword}        { return KEYWORD; }
+{Keyword}       { return KEYWORD; }
 {Symbol}        { return SYMBOL; }
 
 .               { return BAD_CHARACTER; }
