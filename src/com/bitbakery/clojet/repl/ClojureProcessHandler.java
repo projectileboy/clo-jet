@@ -15,14 +15,12 @@ package com.bitbakery.clojet.repl;
  */
 
 import com.bitbakery.clojet.config.CloJetSettings;
-import com.intellij.execution.process.ProcessAdapter;
-import com.intellij.execution.process.ProcessEvent;
-import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.process.ProcessOutputTypes;
+import com.intellij.execution.process.*;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.encoding.EncodingManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.util.Alarm;
@@ -30,6 +28,7 @@ import com.intellij.util.Alarm;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.concurrent.*;
+import java.util.StringTokenizer;
 
 /**
  * Ripped off from OSProcessHandler, minus the command line noise
@@ -84,6 +83,24 @@ public class ClojureProcessHandler extends ProcessHandler {
                     new File(CloJetSettings.getInstance().CLOJURE_HOME));
             myWaitFor = new ProcessWaitFor(myProcess);
         }
+
+        addProcessListener(new ProcessAdapter() {
+            public void onTextAvailable(ProcessEvent event, Key outputType) {
+                System.out.println(scrub(event.getText()));
+            }
+
+            private String scrub(String output) {
+                // TODO - Holy... please clean this!
+                StringTokenizer t = new StringTokenizer(output, "=>");
+                if (t.hasMoreTokens()) {
+                    t.nextToken();
+                    if (t.hasMoreTokens()) {
+                        return t.nextToken().trim();
+                    }
+                }
+                return output;
+            }
+        });
     }
 
     private boolean notConfigured() {

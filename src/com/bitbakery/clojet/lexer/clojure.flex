@@ -57,6 +57,8 @@ CharLiteral=\\(newline|space|tab|return|\"|{Char})
 
 Keyword= :{Char}*
 Symbol={Char}*
+/**** TODO - If the leading character is a ., then that's actually a method call, but it's getting read as a 'classname' token ****/
+Classname=(({Symbol})("."{Symbol})+)
 
 EscapeSequence=\\[^\r\n]
 StringLiteral=\"([^\\\"]|{EscapeSequence})*(\"|\\)?
@@ -70,8 +72,6 @@ StringLiteral=\"([^\\\"]|{EscapeSequence})*(\"|\\)?
 {NumericLiteral} { return NUMERIC_LITERAL; }
 {StringLiteral}  { return STRING_LITERAL; }
 
-
-/** TODO - Any other tokens? =, +, etc.? *******************/
 
 "("             { return LEFT_PAREN; }
 ")"             { return RIGHT_PAREN; }
@@ -131,12 +131,8 @@ StringLiteral=\"([^\\\"]|{EscapeSequence})*(\"|\\)?
 [Dd][Ee][Ff]                         { return DEF; }
 
 
-
-/** TODO - In general, I think we'll want tokens for anything for which we'd like parsing - if statements, etc.)  ***/
-
-/** TODO - In here is where we'd insert core stuff from ac.scm, as.scm, and arc.arc *************************/
-
 {Keyword}       { return KEYWORD; }
+{Classname}     { return CLASSNAME; }
 {Symbol}        { return SYMBOL; }
 
 .               { return BAD_CHARACTER; }

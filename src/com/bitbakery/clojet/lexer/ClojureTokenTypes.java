@@ -112,6 +112,7 @@ public interface ClojureTokenTypes {
 
     IElementType KEYWORD = new ClojureElementType("keyword");
     IElementType SYMBOL = new ClojureElementType("symbol");
+    IElementType CLASSNAME = new ClojureElementType("classname");
     TokenSet SYMBOL_FILTER = TokenSet.create(SYMBOL);
 
 

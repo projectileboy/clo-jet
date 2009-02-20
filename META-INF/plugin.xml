@@ -48,7 +48,7 @@
 
 
         <!--<fileTemplateGroup implementation="com.bitbakery.clojet.templates.ClojureTemplatesFactory"/>-->
-        <!--<liveTemplateContext implementation="com.bitbakery.clojet.templates.ClojureTemplateContextType"/>-->
+        <liveTemplateContext implementation="com.bitbakery.clojet.templates.ClojureTemplateContextType"/>
 
 <!--
         <gotoClassContributor implementation="com.bitbakery.clojet.goto.ClojureGoToFunctionOrMacroContributor"/>
@@ -58,6 +58,7 @@
         <lang.braceMatcher language="Clojure" implementationClass="com.bitbakery.clojet.ClojureBraceMatcher"/>
         <lang.commenter language="Clojure" implementationClass="com.bitbakery.clojet.ClojureCommenter"/>
         <lang.documentationProvider language="Clojure" implementationClass="com.bitbakery.clojet.ClojureDocumentationProvider"/>
+        <lang.findUsagesProvider language="Clojure" implementationClass="com.bitbakery.clojet.ClojureFindUsagesProvider"/>
         <lang.foldingBuilder language="Clojure" implementationClass="com.bitbakery.clojet.ClojureFoldingBuilder"/>
         <lang.languageProvider language="Clojure" implementationClass="com.bitbakery.clojet.ClojureLanguage"/>
         <lang.parserDefinition language="Clojure" implementationClass="com.bitbakery.clojet.ClojureParserDefinition"/>
@@ -93,6 +94,9 @@
             </action>
             <action id="ClojureGoToRepl" class="com.bitbakery.clojet.actions.GoToReplAction" icon="/icons/clojure-icon-16.png">
                 <keyboard-shortcut keymap="$default" first-keystroke="alt R"/>
+            </action>
+            <action id="ClojureMacroexpandOne" class="com.bitbakery.clojet.actions.MacroexpandOneAction" icon="/icons/clojure-icon-16.png">
+                <keyboard-shortcut keymap="$default" first-keystroke="alt M"/>
             </action>
             <separator/>
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>

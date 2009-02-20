@@ -20,6 +20,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 
@@ -53,7 +54,7 @@ public class ClojureParser implements PsiParser {
         parsers.put(DEFMETHOD, new DefmethodParser());
         parsers.put(DEFSTRUCT, new DefstructParser());
         parsers.put(FN, new FnParser());
-      //  parsers.put(LET, new LetParser());
+        //  parsers.put(LET, new LetParser());
 
         types = new HashMap<IElementType, IElementType>();
         types.put(DEF, DEFINITION);
@@ -63,12 +64,12 @@ public class ClojureParser implements PsiParser {
         types.put(DEFMETHOD, METHOD_DEFINITION);
         types.put(DEFSTRUCT, STRUCTURE_DEFINITION);
         types.put(FN, ANONYMOUS_FUNCTION_DEFINITION);
-     //   types.put(LET, LET_BLOCK);
+        //   types.put(LET, LET_BLOCK);
     }
 
     @NotNull
     public ASTNode parse(IElementType root, PsiBuilder builder) {
-        this.builder = builder; 
+        this.builder = builder;
         final PsiBuilder.Marker rootMarker = builder.mark();
         try {
             while (!builder.eof()) {
@@ -85,18 +86,13 @@ public class ClojureParser implements PsiParser {
         //   this parser is re-used, or even it must be thread-safe!
         this.builder = null;
         this.markers.clear();
-        
+
         return builder.getTreeBuilt();
     }
 
     private class CurlyBracketParser implements Parser {
         public void parse() {
-            markAndAdvance();
-            while (notAt(RIGHT_CURLY)) {
-                advanceAndCheck();
-            }
-            builder.advanceLexer();
-            done(CLOJURE_MAP);
+            parseMap();
         }
     }
 
@@ -130,9 +126,20 @@ public class ClojureParser implements PsiParser {
             // We are pointing at 'defmacro'
             advanceAndCheck();
 
+            parseMetadata();
             parseVariableDefinition();
             parseDocstring();
-            parseBody(RIGHT_PAREN); // TODO - This will properly parse the parameters, but it won't recognize them as parameters... hmm....
+
+            // Instead of optional parameters, defmacro allows for multiple implementations based on the number of parameters
+            if (isAt(LEFT_PAREN)) {
+                while (isAt(LEFT_PAREN)) {
+                    advanceAndCheck();
+                    parseImplementation();
+                    advanceAndCheck();
+                }
+            } else {
+                parseImplementation();
+            }
         }
     }
 
@@ -141,10 +148,24 @@ public class ClojureParser implements PsiParser {
             // We are pointing at 'defn'
             advanceAndCheck();
 
+            parseMetadata();
             parseVariableDefinition();
             parseDocstring();
-            parseBody(RIGHT_PAREN); // TODO - This will properly parse the parameters, but it won't recognize them as parameters... hmm....
+            parseFunctionMetadata();
+
+            // Instead of optional parameters, defn allows for multiple implementations based on the number of parameters
+            if (isAt(LEFT_PAREN)) {
+                while (isAt(LEFT_PAREN)) {
+                    advanceAndCheck();
+                    parseImplementation();
+                    advanceAndCheck();
+                }
+            } else {
+                parseImplementation();
+            }
         }
+
+
     }
 
     private class DefmethodParser implements Parser {
@@ -154,7 +175,8 @@ public class ClojureParser implements PsiParser {
 
             parseVariableDefinition();
             parseDocstring();
-            parseBody(RIGHT_PAREN); // TODO - This will properly parse the parameters, but it won't recognize them as parameters... hmm....
+            parseDispatchValue();
+            parseImplementation();
         }
     }
 
@@ -165,7 +187,7 @@ public class ClojureParser implements PsiParser {
 
             parseVariableDefinition();
             parseDocstring();
-            parseBody(RIGHT_PAREN); // TODO - This will properly parse the parameters, but it won't recognize them as parameters... hmm....
+            parseBody(RIGHT_PAREN); // TODO - This isn't properly parsing struct properties
         }
     }
 
@@ -176,7 +198,7 @@ public class ClojureParser implements PsiParser {
 
             parseVariableDefinition();
             parseDocstring();
-            parseBody(RIGHT_PAREN); // TODO - This will properly parse the parameters, but it won't recognize them as parameters... hmm....
+            parseBody(RIGHT_PAREN);
         }
     }
 
@@ -195,7 +217,12 @@ public class ClojureParser implements PsiParser {
             // We are pointing at 'fn'
             advanceAndCheck();
 
-            parseBody(RIGHT_PAREN); // TODO - This will properly parse the parameters, but it won't recognize them as parameters... hmm....
+            // TODO - This is a bit of a hack... for right now, we'll silently ignore any name specified for an fn
+            if (isAt(SYMBOL)) {
+                advanceAndCheck();
+            }
+
+            parseImplementation();
         }
     }
 
@@ -232,10 +259,16 @@ public class ClojureParser implements PsiParser {
     }
 
 
-    
     private IElementType getExpressionType() {
         IElementType type = types.get(builder.getTokenType());
         return type != null ? type : EXPRESSION;
+    }
+
+    private void parseImplementation() {
+        mark();
+        parseParameters();
+        parseBody(RIGHT_PAREN);
+        done(IMPLEMENTATION);
     }
 
     private void parseBody(IElementType terminator) {
@@ -262,17 +295,51 @@ public class ClojureParser implements PsiParser {
             markAndAdvance();
             if (isAt(LEFT_CURLY)) {
                 advanceAndCheck();
+                while (notAt(RIGHT_CURLY)) {
+                    advanceAndCheck(); // TODO - Group key/value pairs
+                }
+                builder.advanceLexer();
+                done(CLOJURE_METADATA);
             }
+        }
+    }
+
+    private void parseFunctionMetadata() {
+        if (isAt(LEFT_CURLY)) {
+            markAndAdvance();
             while (notAt(RIGHT_CURLY)) {
-                advanceAndCheck(); // TODO - Group key/value pairs      
+                parseMetadataPair();
             }
             builder.advanceLexer();
             done(CLOJURE_METADATA);
         }
     }
 
+    private void parseMetadataPair() {
+        mark();
+        parseMetadataKey();
+        parseMetadataValue();
+        done(CLOJURE_METADATA_PAIR);
+    }
+
+    private void parseMetadataKey() {
+        if (isAt(KEYWORD)) {
+            mark();
+            getParser().parse();
+            done(CLOJURE_METADATA_KEY);
+        } else {
+            builder.error("Expected keyword");
+        }
+    }
+
+    private void parseMetadataValue() {
+        mark();
+        getParser().parse();
+        done(CLOJURE_METADATA_VALUE);
+    }
+
     private void parseVariableDefinition() {
-        if (isAt(SYMBOL)) {
+        if (isAt(SYMBOL) || isIn(PSEUDO_SPECIAL_FORMS)) {
             markAndAdvance(VARIABLE_DEFINITION);
         } else {
             builder.error("Expected function name");
@@ -285,8 +352,57 @@ public class ClojureParser implements PsiParser {
         }
     }
 
+    private void parseDispatchValue() {
+        // TODO - We'll want to do something real here eventually; for now, just glide over anything ahead of the param list
+        if (notAt(LEFT_SQUARE)) {
+            advanceAndCheck();
+        }
+    }
+
+    private void parseParameters() {
+        if (isAt(LEFT_SQUARE)) {
+            markAndAdvance();
+            while (notAt(RIGHT_SQUARE)) {
+                parseParameter();
+            }
+            builder.advanceLexer();
+            done(PARAMETER_LIST);
+        } else {
+            builder.error("Expected parameter list");
+        }
+    }
+
+    private void parseParameter() {
+        if (isAt(SYMBOL)) {
+            markAndAdvance(PARAMETER);
+        } else if (isAt(KEYWORD)) {
+            advanceAndCheck(); // TODO - Eventually, we'll want to associate metadata with parameters
+        } else if (isAt(REST)) {
+            advanceAndCheck();
+            if (isAt(SYMBOL)) {
+                markAndAdvance(REST_PARAMETER);
+            }
+            // TODO - Handle errors gracefully - right here, we should assert that we've hit the closing right square bracket
+        } else {
+            advanceAndCheck(); // TODO - For now, just glide over anything we don't understand
+        }
+    }
+
+    private void parseMap() {
+        markAndAdvance();
+        while (notAt(RIGHT_CURLY)) {
+            advanceAndCheck();
+        }
+        builder.advanceLexer();
+        done(CLOJURE_MAP);
+    }
+
     private boolean isAt(IElementType elementType) {
         return elementType == builder.getTokenType();
+    }
+
+    private boolean isIn(TokenSet tokens) {
+        return tokens.contains(builder.getTokenType());
     }
 
     private boolean notAt(IElementType elementType) {
@@ -322,5 +438,5 @@ public class ClojureParser implements PsiParser {
 
     private void done(IElementType type) {
         markers.pop().done(type);
-    }    
+    }
 }

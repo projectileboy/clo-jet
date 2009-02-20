@@ -15,7 +15,6 @@ package com.bitbakery.clojet;
  */
 
 import com.bitbakery.clojet.lexer.ClojureLexer;
-import com.bitbakery.clojet.lexer.ClojureTokenTypes;
 import static com.bitbakery.clojet.lexer.ClojureTokenTypes.*;
 import com.bitbakery.clojet.psi.*;
 import static com.bitbakery.clojet.psi.ClojureElementTypes.*;
@@ -62,11 +61,11 @@ public class ClojureParserDefinition implements ParserDefinition {
 
     @NotNull
     public TokenSet getStringLiteralElements() {
-        return TokenSet.create(STRING_LITERAL); // TODO - Not sure if this is complete
+        return TokenSet.create(STRING_LITERAL); // TODO - Not sure if this is complete...
     }
 
     public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode left, ASTNode right) {
-        // TODO - Is this right? Are there spacing requirements in Lisp/Scheme/Arc that I'm not aware of?
+        // TODO - Is this right? Are there spacing requirements in Clojure that I'm not aware of?
         if (left.getElementType() == COMMA
                 || left.getElementType() == UNQUOTE_SPLICE
                 || left.getElementType() == QUOTE
@@ -99,6 +98,8 @@ public class ClojureParserDefinition implements ParserDefinition {
 
         if (type == FUNCTION_DEFINITION) {
             return new Defn(node);
+        } else if (type == IMPLEMENTATION) {
+            return new Implementation(node);
         } else if (type == ANONYMOUS_FUNCTION_DEFINITION) {
             return new Fn(node);
         } else if (type == DEFINITION) {
@@ -121,6 +122,12 @@ public class ClojureParserDefinition implements ParserDefinition {
             return new Let(node);
         } else if (type == CLOJURE_METADATA) {
             return new ClojureMetadata(node);
+        } else if (type == CLOJURE_METADATA_PAIR) {
+            return new ClojureMetadataPair(node);
+        } else if (type == CLOJURE_METADATA_KEY) {
+            return new ClojureMetadataKey(node);
+        } else if (type == CLOJURE_METADATA_VALUE) {
+            return new ClojureMetadataValue(node);
         } else if (type == VARIABLE_DEFINITION) {
             return new VariableDefinition(node);
         } else if (type == VARIABLE_REFERENCE) {
@@ -129,13 +136,13 @@ public class ClojureParserDefinition implements ParserDefinition {
             return new VariableAssignment(node);
         } else if (type == ArcElementTypes.OPTIONAL_PARAMETER) {
             return new OptionalParameter(node);
-        } else if (type == ArcElementTypes.REST_PARAMETER) {
+        } */else if (type == REST_PARAMETER) {
             return new RestParameter(node);
-        } else if (type == ArcElementTypes.PARAMETER) {
+        } else if (type == PARAMETER) {
             return new Parameter(node);
-        } else if (type == ArcElementTypes.PARAMETER_LIST) {
+        } else if (type == PARAMETER_LIST) {
             return new ParameterList(node);
-        } */else if (type == DOCSTRING) {
+        } else if (type == DOCSTRING) {
             return new Docstring(node);
         }
 

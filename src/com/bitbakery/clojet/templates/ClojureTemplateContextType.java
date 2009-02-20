@@ -26,6 +26,5 @@ public class ClojureTemplateContextType extends FileTypeBasedContextType {
     public ClojureTemplateContextType() {
         super("CLOJURE", "Clojure", CloJetSupportLoader.CLOJURE);
     }
-
 }
 

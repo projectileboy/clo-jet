@@ -20,8 +20,7 @@ import static com.bitbakery.clojet.CloJetStrings.message;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.filters.TextConsoleBuilder;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
-import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.process.ProcessTerminatedListener;
+import com.intellij.execution.process.*;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.actionSystem.ActionGroup;
@@ -37,6 +36,7 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.util.Key;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +45,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,12 +77,63 @@ public class ReplToolWindow implements ProjectComponent {
         }
     }
 
-    public void writeToCurrentRepl(String s) {
+    public String writeToCurrentRepl(String s) {
+        return writeToCurrentRepl(s, true);
+    }
+
+    public String writeToCurrentRepl(String s, boolean requestFocus) {
         if (tabbedPane.getSelectedIndex() > -1) {
-            requestFocus();
-            Repl repl = replList.get(tabbedPane.getSelectedIndex());
-            repl.view.print(s + "\r\n", ConsoleViewContentType.USER_INPUT);
+            final PipedWriter pipeOut;
+            PipedReader pipeIn = null;
+            try {
+                if (requestFocus) requestFocus();
+                final Repl repl = replList.get(tabbedPane.getSelectedIndex());
+
+                pipeOut = new PipedWriter();
+                pipeIn = new PipedReader(pipeOut);
+                BufferedReader in = new BufferedReader(pipeIn);
+
+                ProcessListener processListener = new ProcessAdapter() {
+                    @Override
+                    public void onTextAvailable(ProcessEvent event, Key outputType) {
+                        try {
+                            pipeOut.write(event.getText());
+                            pipeOut.flush();
+                            pipeOut.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+                repl.processHandler.addProcessListener(processListener);
+
+                repl.view.print(s + "\r\n", ConsoleViewContentType.USER_INPUT);
+
+                StringBuffer buf = new StringBuffer();
+                //if (pipeIn.ready()) {
+                    String str;
+                    while ((str = in.readLine()) != null) {
+                        buf.append(str);
+                    }
+                //}
+                repl.processHandler.removeProcessListener(processListener);
+                
+                return buf.toString();
+                
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            } finally {
+                if (pipeIn != null) {
+                    try {
+                        pipeIn.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
+        return null;
     }
 
     public void projectOpened() {
@@ -280,9 +331,6 @@ public class ReplToolWindow implements ProjectComponent {
 
         }
 
-        /**
-         * A bit of a hack, admittedly...
-         */
         public EditorEx getEditor() {
             EditorComponentImpl eci = (EditorComponentImpl) view.getPreferredFocusableComponent();
             return eci.getEditor();

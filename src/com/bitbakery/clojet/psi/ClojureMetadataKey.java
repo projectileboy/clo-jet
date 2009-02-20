@@ -15,11 +15,7 @@ package com.bitbakery.clojet.psi;
  */
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.NonNls;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.IncorrectOperationException;
 
 /**
  * Created by IntelliJ IDEA.
@@ -28,17 +24,8 @@ import com.intellij.util.IncorrectOperationException;
  * Time: 2:45:05 PM
  * To change this template use File | Settings | File Templates.
  */
-public class VariableDefinition extends ClojureElement implements PsiNamedElement {
-    public VariableDefinition(@NotNull final ASTNode node) {
+public class ClojureMetadataKey extends ClojureElement {
+    public ClojureMetadataKey(@NotNull final ASTNode node) {
         super(node);
-    }
-
-
-    public String getName() {
-        return getText();
-    }
-    
-    public PsiElement setName(@NonNls String name) throws IncorrectOperationException {
-        return null;  // TODO - Make me real!
     }
 }

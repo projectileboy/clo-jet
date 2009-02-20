@@ -53,7 +53,7 @@ public class VariableReference extends ClojureElement {
 
         private PsiElement walkTree(PsiElement e) {
             if (e == null) {
-                // TODO - This works!! Now I just need to incorporate standard Arc source files!
+                // TODO - This works!! Now I just need to incorporate standard Clojure source files, as well as any library files!
 
                 VirtualFile[] roots = ProjectRootManager.getInstance(myElement.getProject()).getContentRoots();
                 return search(roots, myElement.getProject());
@@ -63,8 +63,7 @@ public class VariableReference extends ClojureElement {
                         return def;
                     }
                 }
-/*
-            } else if (e instanceof Def || e instanceof Mac || e instanceof Fn) {
+            } else if (hasParameterList(e)) {
                 if (nameMatches(e)) {
                     return e;
                 }
@@ -77,8 +76,7 @@ public class VariableReference extends ClojureElement {
                         }
                     }
                 }
-*/
-                
+
 /*
             } else if (e instanceof Let) {
                 VariableDefinition var = PsiTreeUtil.getChildOfType(e, VariableDefinition.class);
@@ -102,6 +100,10 @@ public class VariableReference extends ClojureElement {
             }
 
             return walkTree(e.getParent());
+        }
+
+        private boolean hasParameterList(PsiElement e) {
+            return e instanceof Defn || e instanceof Defmacro || e instanceof Fn || e instanceof Defmethod || e instanceof Implementation;
         }
 
         private PsiElement search(VirtualFile[] children, Project p) {

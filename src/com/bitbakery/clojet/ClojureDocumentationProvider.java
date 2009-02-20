@@ -17,6 +17,7 @@ package com.bitbakery.clojet;
 import com.bitbakery.clojet.psi.Defmacro;
 import com.bitbakery.clojet.psi.Defn;
 import com.bitbakery.clojet.psi.VariableDefinition;
+import com.bitbakery.clojet.psi.VariableReference;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
@@ -31,10 +32,11 @@ import java.net.URL;
  */
 public class ClojureDocumentationProvider implements DocumentationProvider {
     // TODO - I needs to be configurablzzz
-    private static final String DOC_ROOT_URL = "http://www.bitbakery.com/arc-";
+    private static final String DOC_ROOT_URL = "http://clojure.org/api#";
 
     @Nullable
     public String getQuickNavigateInfo(PsiElement element) {
+        // TODO - For some elements, we need to pull the docstring from the metadata
         if (element instanceof Defn) {
             return ((Defn) element).getDocstring();
         } else if (element instanceof Defmacro) {
@@ -46,8 +48,8 @@ public class ClojureDocumentationProvider implements DocumentationProvider {
     @Nullable
     public String getUrlFor(PsiElement element, PsiElement originalElement) {
         // TODO - We need to be able to specify which URL we should go to, based on the file we're in
-        if (element instanceof VariableDefinition) {
-            return DOC_ROOT_URL + ((VariableDefinition) element).getName();
+        if (element instanceof VariableReference) {
+            return DOC_ROOT_URL + ((VariableReference) element).getName();
         }
         return null;
     }
@@ -58,7 +60,7 @@ public class ClojureDocumentationProvider implements DocumentationProvider {
         StringBuffer buf = new StringBuffer();
         BufferedReader in = null;
         try {
-            URL url = new URL(DOC_ROOT_URL + ((VariableDefinition) element).getName());
+            URL url = new URL(getUrlFor(element, originalElement));
             in = new BufferedReader(new InputStreamReader(url.openStream()));
             String str;
             while ((str = in.readLine()) != null) {

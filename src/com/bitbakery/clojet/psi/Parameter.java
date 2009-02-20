@@ -14,31 +14,22 @@ package com.bitbakery.clojet.psi;
  * governing permissions and limitations under the License.
  */
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.NonNls;
+import com.bitbakery.clojet.CloJetIcons;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiNamedElement;
+import com.intellij.navigation.ItemPresentation;
+import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNamedElement;
+import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.IncorrectOperationException;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-/**
- * Created by IntelliJ IDEA.
- * User: kurtc
- * Date: Feb 9, 2009
- * Time: 2:45:05 PM
- * To change this template use File | Settings | File Templates.
- */
-public class VariableDefinition extends ClojureElement implements PsiNamedElement {
-    public VariableDefinition(@NotNull final ASTNode node) {
+import javax.swing.*;
+
+public class Parameter extends VariableDefinition {
+    public Parameter(ASTNode node) {
         super(node);
-    }
-
-
-    public String getName() {
-        return getText();
-    }
-    
-    public PsiElement setName(@NonNls String name) throws IncorrectOperationException {
-        return null;  // TODO - Make me real!
     }
 }

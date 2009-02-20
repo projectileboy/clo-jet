@@ -15,6 +15,7 @@ package com.bitbakery.clojet.psi;
  */
 
 import com.bitbakery.clojet.CloJetIcons;
+import static com.bitbakery.clojet.psi.ClojureElementTypes.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
@@ -40,12 +41,26 @@ public class VariableAssignment extends Expression implements PsiNamedElement {
 
     public VariableAssignment(ASTNode node) {
         super(node);
-        ASTNode[] children = node.getChildren(TokenSet.create(ClojureElementTypes.VARIABLE_DEFINITION));
+        ASTNode[] children = node.getChildren(TokenSet.create(VARIABLE_DEFINITION));
         name = isEmpty(children) ? "=" : children[0].getText();
     }
 
     public String getName() {
         return name;
+    }
+
+    public int[] getParameterCounts() {
+        ASTNode[] impls = getNode().getChildren(TokenSet.create(IMPLEMENTATION));
+        if (impls != null && impls.length > 0) {
+            int[] paramCounts = new int[impls.length];
+
+            for (int i = 0; i < impls.length; i++) {
+                ASTNode[] paramList = impls[i].getChildren(TokenSet.create(PARAMETER_LIST));
+                paramCounts[i] = paramList[0].getChildren(TokenSet.create(PARAMETER, REST_PARAMETER)).length;
+            }
+            return paramCounts;
+        }
+        return new int[0];
     }
 
     public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
